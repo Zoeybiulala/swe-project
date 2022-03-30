@@ -6,159 +6,86 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// import the Person class from Person.js
-var Person = require('./Person.js');
+// Connect to personDatabase and model relevant classes
+// (This won't be used in our project, it's just to show the use of multiple databases)
+// source: https://mongoosejs.com/docs/connections.html
+const mongoose = require('mongoose');
+const conn = mongoose.createConnection('mongodb://localhost:27018/personDatabase');
+var Person = conn.model('Person', require('./Person.js'));
+
+// Connect to recipeDatabase and model relevant classes 
+const conn2 = mongoose.createConnection('mongodb://localhost:27018/recipeDatabase');
+var Recipe = conn2.model('Recipe', require('./Recipe.js'));
 
 /***************************************/
 
-// endpoint for creating a new person
-// this is the action of the "create new person" form
-app.use('/create', (req, res) => {
-	// construct the Person from the form data which is in the request body
-	var newPerson = new Person ({
-		name: req.body.name,
-		age: req.body.age,
-	    });
+// Code that tests creating and saving recipe objects in a database 
 
-	// save the person to the database
-	newPerson.save( (err) => { 
+// Clear recipe database 
+console.log(Recipe.deleteMany());
+
+// Create new recipes
+var exampleRecipe = new Recipe ({
+	recipe_id: 1,
+	url: "google.com",
+	description: "delicious",
+	name: "chicken ala google",
+	tags: [],
+	list_of_users : []
+});
+
+var exampleRecipe2 = new Recipe ({
+	recipe_id: 2,
+	url: "google.net",
+	description: "bad",
+	name: "chicken ala fake google",
+	tags: [],
+	list_of_users : []
+});
+
+// save the recipes to the database
+exampleRecipe.save(); 
+exampleRecipe2.save();
+
+/****************************************/
+
+app.use('/recipes', (req, res) => {
+	// find all the Recipe objects in the (recipe) database
+	Recipe.find( {}, (err, recipes) => {
 		if (err) {
-		    res.type('html').status(200);
-		    res.write('uh oh: ' + err);
-		    console.log(err);
-		    res.end();
-		}
-		else {
-		    // display the "successfull created" message
-		    res.send('successfully added ' + newPerson.name + ' to the database');
-		}
-	    } ); 
-    }
-    );
-
-// Modified from "create"
-app.use('/new', (req, res) => {
-		// construct the Person from the form data which is in the request body
-		var newPerson = new Person ({
-			name: req.query.name,
-			age: req.query.age,
-			});
-	
-		// save the person to the database
-		newPerson.save( (err) => { 
-			if (err) {
-				console.log(err);
-				res.json({"status":"error"});
-			}
-			else {
-				// display the "successfull created" message
-				res.json({"status":"success"});
-			}
-			} ); 
-		}
-		);	
-
-// endpoint for showing all the people
-app.use('/all', (req, res) => {
-    
-	// find all the Person objects in the database
-	Person.find( {}, (err, persons) => {
-		if (err) {
-		    res.type('html').status(200);
-		    console.log('uh oh' + err);
-		    res.write(err);
-		}
-		else {
-		    if (persons.length == 0) {
 			res.type('html').status(200);
-			res.write('There are no people');
+			console.log('uh oh' + err);
+			res.write(err);
+		}
+		else {
+			if (recipes.length == 0) {
+			res.type('html').status(200);
+			res.write('There are no recipes');
 			res.end();
 			return;
-		    }
-		    else {
+			}
+			else {
 			res.type('html').status(200);
-			res.write('Here are the people in the database:');
+			res.write('Here are the recipes in the database:');
 			res.write('<ul>');
-			// show all the people
-			persons.forEach( (person) => {
-			    res.write('<li>');
-			    res.write('Name: ' + person.name + '; age: ' + person.age);
-			    // this creates a link to the /delete endpoint
-			    res.write(" <a href=\"/delete?name=" + person.name + "\">[Delete]</a>");
-			    res.write('</li>');
-					 
+			// show all the recipes
+			recipes.forEach( (recipe) => {
+				res.write('<li>');
+				res.write('Name: ' + recipe.name + '; ID: ' + recipe.recipe_id);
+				res.write('</li>');
+						
 			});
 			res.write('</ul>');
 			res.end();
-		    }
+			}
 		}
-	    }).sort({ 'age': 'asc' }); // this sorts them BEFORE rendering the results
+		}).sort({ 'ID': 'asc' }); // this sorts them BEFORE rendering the results
 });
-
-app.use('/delete', (req, res) => {
-    
-	var name = req.query.name;
-	var filter = {'name':name};
-	Person.findOneAndDelete(filter, (err, person) => {
-		if(err){
-			console.log("Incorrect parameters");
-		} else if (!person){
-			console.log("Person does not exist");
-		}
-	});
-	
-	res.redirect('/all');
-});
-
-
-
-// endpoint for accessing data via the web api
-// to use this, make a request for /api to get an array of all Person objects
-// or /api?name=[whatever] to get a single object
-app.use('/api', (req, res) => {
-
-	// construct the query object
-	var queryObject = {};
-	if (req.query.name) {
-	    // if there's a name in the query parameter, use it here
-	    queryObject = { "name" : req.query.name };
-	}
-    
-	Person.find( queryObject, (err, persons) => {
-		console.log(persons);
-		if (err) {
-		    console.log('uh oh' + err);
-		    res.json({});
-		}
-		else if (persons.length == 0) {
-		    // no objects found, so send back empty json
-		    res.json({});
-		}
-		else if (persons.length == 1 ) {
-		    var person = persons[0];
-		    // send back a single JSON object
-		    res.json( { "name" : person.name , "age" : person.age } );
-		}
-		else {
-		    // construct an array out of the result
-		    var returnArray = [];
-		    persons.forEach( (person) => {
-			    returnArray.push( { "name" : person.name, "age" : person.age } );
-			});
-		    // send it back as JSON Array
-		    res.json(returnArray); 
-		}
-		
-	    });
-    });
-
-
-
 
 /*************************************************/
 
+// Person endpoints will be deleted eventually
 app.use('/public', express.static('public'));
-
 app.use('/', (req, res) => { res.redirect('/public/personform.html'); } );
 
 app.listen(3000,  () => {
