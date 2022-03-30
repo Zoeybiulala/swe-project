@@ -6,20 +6,86 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Connect to personDatabase and model relevant classes
-// (This won't be used in our project, it's just to show the use of multiple databases)
-// source: https://mongoosejs.com/docs/connections.html
+// Connect to database and model relevant classes
 const mongoose = require('mongoose');
-const conn = mongoose.createConnection('mongodb://localhost:27018/personDatabase');
-var Person = conn.model('Person', require('./Person.js'));
+const conn = mongoose.createConnection('mongodb://localhost:27017/');
+var Recipe = conn.model('Recipe', require('./Recipe.js'));
+var User = conn.model('User', require('./User.js'));
 
-// Connect to recipeDatabase and model relevant classes 
-const conn2 = mongoose.createConnection('mongodb://localhost:27018/recipeDatabase');
-var Recipe = conn2.model('Recipe', require('./Recipe.js'));
+/*************************************************/
+// Endpoints that return HTML 
+/*************************************************/
 
-// Connect to userDatabase and model relevant classes 
-const conn3 = mongoose.createConnection('mongodb://localhost:27018/userDatabase');
-var User = conn3.model('User', require('./User.js'));
+// Display all recipes in recipe database
+app.use('/all', (req, res) => {
+	// find all the Recipe objects in the (recipe) database
+	Recipe.find( {}, (err, recipes) => {
+		
+		if (err) {
+			res.type('html').status(200);
+			console.log('uh oh' + err);
+			res.write(err);
+		}
+		
+		else {
+			if (recipes.length == 0) {
+			res.type('html').status(200);
+			res.write('There are no recipes');
+			res.end();
+			return;
+			}
+			else {
+			res.type('html').status(200);
+			res.write('Here are the recipes in the database:');
+			res.write('<ul>');
+			// show all the recipes
+			recipes.forEach( (recipe) => {
+				res.write('<li>');
+				res.write('Name: ' + recipe.name + '; ID: ' + recipe.recipe_id);
+				res.write('</li>');
+						
+			});
+			res.write('</ul>');
+			res.end();
+			}
+		}
+		}).sort({ 'ID': 'asc' }); // this sorts them BEFORE rendering the results
+});
+
+/*************************************************/
+// Endpoints that return JSON 
+/*************************************************/
+
+app.use('/api', (req, res) => {
+	Recipe.find({}, (err, recipes) => {
+		if(err){
+			console.log(err);
+			res.type('html').status(200);
+			console.log('uh oh' + err);
+			res.write(err);
+		} else {
+			res.json(recipes);
+		}
+	});
+
+});
+
+app.use('/users', (req, res) => {
+	User.find({}, (err, users) => {
+		if(err){
+			console.log(err);
+			res.type('html').status(200);
+			console.log('uh oh' + err);
+			res.write(err);
+		} else {
+			res.json(users);
+		}
+	});
+});
+
+/*************************************************/
+// Endpoints used for testing 
+/*************************************************/
 
 // Clear recipe database and user database 
 app.use('/clearDatabase', (req, res) => {
@@ -69,45 +135,10 @@ app.use('/addExamples', (req, res) =>{
 	res.end();
 })
 
-// Display all recipes in recipe database
-app.use('/recipes', (req, res) => {
-	// find all the Recipe objects in the (recipe) database
-	Recipe.find( {}, (err, recipes) => {
-		if (err) {
-			res.type('html').status(200);
-			console.log('uh oh' + err);
-			res.write(err);
-		}
-		else {
-			if (recipes.length == 0) {
-			res.type('html').status(200);
-			res.write('There are no recipes');
-			res.end();
-			return;
-			}
-			else {
-			res.type('html').status(200);
-			res.write('Here are the recipes in the database:');
-			res.write('<ul>');
-			// show all the recipes
-			recipes.forEach( (recipe) => {
-				res.write('<li>');
-				res.write('Name: ' + recipe.name + '; ID: ' + recipe.recipe_id);
-				res.write('</li>');
-						
-			});
-			res.write('</ul>');
-			res.end();
-			}
-		}
-		}).sort({ 'ID': 'asc' }); // this sorts them BEFORE rendering the results
-});
-
 /*************************************************/
 
-// Person-related endpoints will be deleted eventually
 app.use('/public', express.static('public'));
-app.use('/', (req, res) => { res.redirect('/public/personform.html'); } );
+app.use('/', (req, res) => { res.redirect('/all'); } );
 
 app.listen(3000,  () => {
 	console.log('Listening on port 3000');
