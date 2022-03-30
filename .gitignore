@@ -1,0 +1,3 @@
+# Folders ruby is using to run mongo in this directory
+mongodb-macos-x86_64-5.0.6/
+local_mongo_data/
