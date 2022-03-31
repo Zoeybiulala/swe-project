@@ -10,6 +10,7 @@ import io.realm.mongodb.AppConfiguration;
 public class RealmApp extends Application {
 
     public static App app = null;
+    public static final String appId = "explorejournal-ebrtn";
 
     @Override
     public void onCreate() {
@@ -17,8 +18,6 @@ public class RealmApp extends Application {
         // user log in
         Realm.init(this);
 
-        String appID = "explorejournal-jgwvj"; // replace this with your App ID
-        app = new App(new AppConfiguration.Builder(appID)
-                .build());
+        app = new App(new AppConfiguration.Builder(appId).build());
     }
 }
