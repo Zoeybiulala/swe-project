@@ -18,7 +18,8 @@ var User = conn.model('User', require('./User.js'));
 
 // Display all recipes in recipe database
 app.use('/all', (req, res) => {
-	// find all the Recipe objects in the (recipe) database
+	
+	// find all the Recipe objects in the database
 	Recipe.find( {}, (err, recipes) => {
 		
 		if (err) {
@@ -28,28 +29,22 @@ app.use('/all', (req, res) => {
 		}
 		
 		else {
-			if (recipes.length == 0) {
-			res.type('html').status(200);
-			res.write('There are no recipes');
-			res.end();
-			return;
-			}
-			else {
-			res.type('html').status(200);
-			res.write('Here are the recipes in the database:');
-			res.write('<ul>');
+
+			// Create title 
+			res.type('html');
+			res.write("<h1>Recipes</h1>");
+	
 			// show all the recipes
 			recipes.forEach( (recipe) => {
-				res.write('<li>');
-				res.write('Name: ' + recipe.name + '; ID: ' + recipe.recipe_id);
-				res.write('</li>');
-						
+				res.write("<p>");
+				res.write("<a href=\"/recipe?id=" + recipe.recipe_id + "\">");
+				res.write(recipe.name + " (" + recipe.recipe_id + ")");
+				res.write("</a>")
+				res.write("</p>");
 			});
-			res.write('</ul>');
 			res.end();
-			}
 		}
-		}).sort({ 'ID': 'asc' }); // this sorts them BEFORE rendering the results
+		}).sort({ 'name': 'asc' }); // this sorts them BEFORE rendering the results
 });
 
 /*************************************************/
