@@ -110,7 +110,7 @@ app.use('/create_recipe', (req,res) => {
 	// });
 	
 
-	/* some weird bugs saying num_of_recipes is not number */
+	/* some weird bugs saying num_of_recipes is not number so for now using this*/
 	count++;
 	//construct the recipe from request body
 	var newRecipe = new Recipe ( {
@@ -128,10 +128,13 @@ app.use('/create_recipe', (req,res) => {
 		    console.log(err);
 		    res.end();
 		} else {
-			res.write('successfully added ' + newRecipe.name + ' to the database')
+			res.type('html').status(200);
+			res.write('<p>successfully added ' + newRecipe.name + ' to the database</p>');
 			res.write("<a href=\"/all\">[Go back]</a>");
+			res.end();
+			console.log(count);
 		}
-	})
+	});
 });
 
 
@@ -177,6 +180,7 @@ app.use('/users', (req, res) => {
 
 // Clear recipe database and user database 
 app.use('/clearDatabase', (req, res) => {
+	count = 0;
 	Recipe.deleteMany({}, (err)=>{if(err){console.log(err)}});
 	User.deleteMany({}, (err)=>{if(err){console.log(err)}});
 	res.end();
