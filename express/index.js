@@ -15,6 +15,7 @@ const conn = mongoose.createConnection('mongodb://localhost:27017/');
 var Recipe = conn.model('Recipe', require('./Recipe.js'));
 var User = conn.model('User', require('./User.js'));
 
+var count = 0;
 /*************************************************/
 // Endpoints that return HTML 
 /*************************************************/
@@ -42,9 +43,10 @@ app.use('/all', (req, res) => {
 				res.write("<p>");
 				res.write("<a href=\"/recipe?id=" + recipe.recipe_id + "\">");
 				res.write(recipe.name + " (" + recipe.recipe_id + ")");
-				res.write("</a>")
+				res.write("</a>");
 				res.write("</p>");
 			});
+			res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
 			res.end();
 		}
 		}).sort({ 'name': 'asc' }); // this sorts them BEFORE rendering the results
@@ -93,13 +95,42 @@ app.use('/recipe', (req, res) => {
 
 //endpoint to create a new recipe and add it to db 
 app.use('/create_recipe', (req,res) => {
+	//I can't find how to directly get the number of objects in the db so..
+	// var num_of_recipes;
+	// Recipe.find( {}, (err, recipes) => {
+	// 	if(err) {
+	// 		//most likely not going to happen, but
+	// 		res.type('html').status(200);
+	// 	    console.log('uh oh' + err);
+	// 	    res.write(err);
+	// 	} else {
+	// 		num_of_recipes = recipes.length;
+	// 		console.log(num_of_recipes);
+	// 	}
+	// });
+	
+
+	/* some weird bugs saying num_of_recipes is not number */
+	count++;
 	//construct the recipe from request body
 	var newRecipe = new Recipe ( {
+		//Recipe.length doesn't work as well.
+		recipe_id: Number(count),
 		name: req.body.name,
 		url: req.body.url,
 		description: req.body.description,
-		recipe_id: Recipe.length,
-
+	});
+	
+	newRecipe.save( (err) => {
+		if(err) {
+			res.type('html').status(200);
+		    res.write('uh oh: ' + err);
+		    console.log(err);
+		    res.end();
+		} else {
+			res.write('successfully added ' + newRecipe.name + ' to the database')
+			res.write("<a href=\"/all\">[Go back]</a>");
+		}
 	})
 });
 
@@ -153,18 +184,19 @@ app.use('/clearDatabase', (req, res) => {
 
 // Create some example recipes and add them to the database
 app.use('/addExamples', (req, res) =>{
+	count ++;
 
 	var exampleRecipe = new Recipe ({
-		recipe_id: 1,
+		recipe_id: count,
 		url: "google.com",
 		description: "delicious",
 		name: "chicken ala google",
 		tags: [],
 		list_of_users : []
 	});
-
+	count ++;
 	var exampleRecipe2 = new Recipe ({
-		recipe_id: 2,
+		recipe_id: count,
 		url: "google.net",
 		description: "bad",
 		name: "chicken ala fake google",
