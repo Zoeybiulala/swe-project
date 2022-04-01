@@ -1,3 +1,6 @@
+//formatting purposes, maybe later
+var ejs = require('ejs');
+
 // set up Express
 var express = require('express');
 var app = express();
@@ -45,7 +48,66 @@ app.use('/all', (req, res) => {
 			res.end();
 		}
 		}).sort({ 'name': 'asc' }); // this sorts them BEFORE rendering the results
+}); 
+
+//endpoint to view specific recipe
+app.use('/recipe', (req, res) => {
+	//no id 
+	if(!req.query.id) {
+		res.type('html').status(200);
+		res.write('invalid input');
+		res.end();
+	}
+
+	//find the recipe in db
+	var queryObject = {"recipe_id" : req.query.id};
+	Recipe.findOne( queryObject, (err, recipe) => {
+		console.log(recipe);
+		if(err){
+			res.type('html').status(200);
+		    console.log('uh oh' + err);
+		    res.write(err);
+		} else {
+			if( recipe.length == 0) {
+				res.type('html').status(200);
+				res.write('no recipe for this id');
+				res.end();
+				return;
+			} else {
+				res.type('html').status(200);
+				res.write('<h1>' + recipe.name + '</h1>');
+				res.write('<p>ID:' + recipe.recipe_id + '</p>');
+				res.write('<p>URL: <a href=<a href=\"' + recipe.url + '\">'
+							+ recipe.url+'</a></p>');
+				res.write('<p>Description: ' + recipe.description + '</p>');
+				//TODO: adding tags and deleting recipe (other usr stories)
+				res.write('<p>Tags: ' + recipe.tags + 
+						'<a href=\"/add_tags\">[add tags]</a></p>');
+				res.write("<a href=\"/delete?recipe_id=" + recipe.recipe_id + "\">[Delete this recipe]<br></a>");
+				res.write("<a href=\"/all\">[Go back]</a>");
+				res.end();
+			}
+		}
+	})
 });
+
+//endpoint to create a new recipe and add it to db 
+app.use('/create_recipe', (req,res) => {
+	//construct the recipe from request body
+	var newRecipe = new Recipe ( {
+		name: req.body.name,
+		url: req.body.url,
+		description: req.body.description,
+		recipe_id: Recipe.length,
+
+	})
+});
+
+
+//possibily implementing a error endpoint ?
+// app.use('/err', (req, res) => {
+// 	res.send('uh oh');
+// })
 
 /*************************************************/
 // Endpoints that return JSON 

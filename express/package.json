@@ -18,6 +18,8 @@
   "homepage": "https://github.com/rmalusa72/swe-project#readme",
   "dependencies": {
     "body-parser": "^1.19.2",
+    "ej": "^1.0.4",
+    "ejs": "^3.1.6",
     "express": "^4.17.3",
     "mongoose": "^6.2.9"
   }
