@@ -8,7 +8,6 @@ var attemptSchema = new Schema({
     });
 
 var userSchema = new Schema({
-    User_id: {type: String, required: true, unique: true},
     Email: {type: String, required: true, unique: true},
     Saved_recipes:  {
        type: Map,
