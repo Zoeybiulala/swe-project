@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to database and model relevant classes
 const mongoose = require('mongoose');
-const conn = mongoose.createConnection('mongodb://localhost:27017/');
+const conn = mongoose.createConnection('mongodb+srv://thdang:PfNuJS36uRbLXFB@cluster0.xiudz.mongodb.net/exploreJournalDb?retryWrites=true');
 var Recipe = conn.model('Recipe', require('./Recipe.js'));
 var User = conn.model('User', require('./User.js'));
 

@@ -2,6 +2,8 @@ package com.example.explorejournal;
 
 import static com.example.explorejournal.RealmApp.app;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ import io.realm.mongodb.auth.GoogleAuthType;
 public class MainActivity extends AppCompatActivity {
 
     private  GoogleSignInClient googleSignInClient;
+    private ActivityResultLauncher<Intent> resultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,37 +35,28 @@ public class MainActivity extends AppCompatActivity {
 
         GoogleSignInOptions gso = new GoogleSignInOptions
                 .Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken("734218205000-s5p82l31oa4mvrknklemia53407jclc7.apps.googleusercontent.com")
+                .requestIdToken(getString(R.string.server_client_id))
                 .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        findViewById(R.id.sign_in_button).setOnClickListener(v -> {
-            switch (v.getId()) {
-                case R.id.sign_in_button:
-                    signIn();
-                    break;
-                // ...
-            }
-        });
-    }
+        resultLauncher =
+                registerForActivityResult(
+                        new ActivityResultContracts.StartActivityForResult(),
+                        result -> {
+                            Task<GoogleSignInAccount> task =
+                                    GoogleSignIn.getSignedInAccountFromIntent(result.getData());
+                            handleSignInResult(task);
+                        });
 
+        findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener)(it -> MainActivity.this.signIn()));
+    }
 
     private void signIn() {
+        System.out.println("here");
         Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivity(signInIntent);
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        resultLauncher.launch(signInIntent);
 
-        // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
-        if (requestCode == 100) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            handleSignInResult(task);
-        }
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
@@ -74,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
                         Credentials.google(token, GoogleAuthType.ID_TOKEN);
                 app.loginAsync(googleCredentials, it -> {
                     if (it.isSuccess()) {
+
+                        // TODO: update UI method, follow https://www.youtube.com/watch?v=k0TUwjxr8LE
+
+                        startActivity(new Intent(this, SampleResult.class));
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
                     } else {
@@ -84,9 +82,12 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Log.e("AUTH", "Google Auth failed: "
                         + completedTask.getException().toString());
+
+                // TODO toast
             }
         } catch (ApiException e) {
             Log.w("AUTH", "Failed to log in with Google OAuth: " + e.getMessage());
+            // TODO toast
         }
     }
 }
