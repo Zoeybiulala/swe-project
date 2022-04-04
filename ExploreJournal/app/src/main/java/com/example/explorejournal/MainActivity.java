@@ -60,17 +60,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        System.out.println("here2");
         try {
             if (completedTask.isSuccessful()) {
                 GoogleSignInAccount account = completedTask.getResult(ApiException.class);
                 String token = account.getIdToken();
-                System.out.println("here3");
                 Credentials googleCredentials =
                         Credentials.google(token, GoogleAuthType.ID_TOKEN);
-                System.out.println("here4");
                 app.loginAsync(googleCredentials, it -> {
                     if (it.isSuccess()) {
+
+                        // TODO: update UI method, follow https://www.youtube.com/watch?v=k0TUwjxr8LE
+
                         startActivity(new Intent(this, SampleResult.class));
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
@@ -82,9 +82,12 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Log.e("AUTH", "Google Auth failed: "
                         + completedTask.getException().toString());
+
+                // TODO toast
             }
         } catch (ApiException e) {
             Log.w("AUTH", "Failed to log in with Google OAuth: " + e.getMessage());
+            // TODO toast
         }
     }
 }
