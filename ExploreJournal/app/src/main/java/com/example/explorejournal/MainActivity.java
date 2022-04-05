@@ -85,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
                         MongoClient mongoClient =
                                 user.getMongoClient("mongodb-atlas"); // service for MongoDB Atlas cluster containing custom user data
                         MongoDatabase mongoDatabase =
-                                mongoClient.getDatabase("custom-user-data-database");
+                                mongoClient.getDatabase("exploreJournalDb");
                         MongoCollection<Document> mongoCollection =
-                                mongoDatabase.getCollection("custom-user-data-collection");
+                                mongoDatabase.getCollection("users");
 
                         /*
                         ERROR
