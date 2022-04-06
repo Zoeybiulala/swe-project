@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.example.explorejournal.simplelistexample.ScrollList;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -25,9 +26,6 @@ import org.bson.Document;
 import io.realm.mongodb.Credentials;
 import io.realm.mongodb.User;
 import io.realm.mongodb.auth.GoogleAuthType;
-import io.realm.mongodb.mongo.MongoClient;
-import io.realm.mongodb.mongo.MongoCollection;
-import io.realm.mongodb.mongo.MongoDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
 
                         // TODO: update UI method, follow https://www.youtube.com/watch?v=k0TUwjxr8LE
 
-                        // TODO code to insert user into database!
                         User user = app.currentUser();
                         System.out.println(user.getId());
                         System.out.println("profile" + user.getProfile().getName());
@@ -86,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                         // access the user's data, which will trigger the express app to create a new entry
                         // if that user does not already have one.
 
-                        startActivity(new Intent(this, SampleResult.class));
+                        startActivity(new Intent(this, ScrollList.class));
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
                     } else {
