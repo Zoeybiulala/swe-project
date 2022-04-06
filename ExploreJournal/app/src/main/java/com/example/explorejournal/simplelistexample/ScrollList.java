@@ -10,6 +10,8 @@ import android.os.Bundle;
 import com.example.explorejournal.R;
 import com.example.explorejournal.simplelistexample.RecyclerViewStringAdapter;
 
+import java.util.LinkedList;
+
 public class ScrollList extends AppCompatActivity {
 
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
@@ -21,7 +23,16 @@ public class ScrollList extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new RecyclerViewStringAdapter(this));
+
+        // Create fixed text
+        // recyclerView.setAdapter(new RecyclerViewStringAdapter(this));
+
+        LinkedList<String> exampleData = new LinkedList<String>();
+        for(int i=0; i<100; i++){
+            exampleData.add(Integer.toString(i));
+        }
+        recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, exampleData));
+
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
