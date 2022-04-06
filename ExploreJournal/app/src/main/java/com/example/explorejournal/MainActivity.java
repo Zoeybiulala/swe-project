@@ -2,8 +2,6 @@ package com.example.explorejournal;
 
 import static com.example.explorejournal.RealmApp.app;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,15 +11,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-import com.example.explorejournal.simplelistexample.ScrollList;
+import com.example.explorejournal.expressexample.ExpressExample;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-
-import org.bson.Document;
 
 import io.realm.mongodb.Credentials;
 import io.realm.mongodb.User;
@@ -83,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                         // access the user's data, which will trigger the express app to create a new entry
                         // if that user does not already have one.
 
-                        startActivity(new Intent(this, ScrollList.class));
+                        startActivity(new Intent(this, ExpressExample.class));
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
                     } else {

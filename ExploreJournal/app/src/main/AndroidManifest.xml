@@ -9,7 +9,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ExploreJournal">
+        android:theme="@style/Theme.ExploreJournal"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".expressexample.ExpressExample"
+            android:exported="false" />
         <activity
             android:name=".simplelistexample.ScrollList"
             android:exported="false" />
