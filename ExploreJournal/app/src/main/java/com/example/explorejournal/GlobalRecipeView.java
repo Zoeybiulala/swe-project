@@ -1,43 +1,59 @@
-package com.example.explorejournal.expressexample;
+package com.example.explorejournal;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.TextView;
 
 import com.example.explorejournal.R;
-import com.example.explorejournal.Recipe;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
+import com.example.explorejournal.simplelistexample.RecyclerViewStringAdapter;
+import com.example.explorejournal.simplelistexample.RecyclerViewStringListAdapter;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class ExpressExample extends AppCompatActivity {
+import android.os.Bundle;
+import android.util.Log;
 
-    String message;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class GlobalRecipeView extends AppCompatActivity {
+    // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
+
+    List<Recipe> allRecipesList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_express_example);
+        setContentView(R.layout.activity_scroll_list);
 
-        // Referenced from Chris' Sample Web App
-        TextView tv = findViewById(R.id.StuffFromExpressView);
+        RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        getAllRecipes();
+        List<Recipe> allRecipes = getAllRecipes();
+        List<String> allRecipeStrings = new ArrayList<String>();
+        for(int i=0; i<allRecipes.size(); i++){
+            allRecipeStrings.add(allRecipes.get(i).toString());
+        }
+        recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, allRecipeStrings));
+
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
     // Fetch JSON array of recipes from server, and convert it into a list of Recipe objects
-    List<Recipe> getAllRecipes(){
+    public List<Recipe> getAllRecipes(){
 
         try {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -84,13 +100,10 @@ public class ExpressExample extends AppCompatActivity {
                                 }
                             }
 
-                            for(Recipe r : allRecipes){
-                                System.out.println(r);
-                            }
+                            allRecipesList = allRecipes;
 
                         }
                         catch (Exception e) {
-                            message = e.toString();
                             Log.v("Express", e.toString());
                         }
                     }
@@ -105,6 +118,6 @@ public class ExpressExample extends AppCompatActivity {
             // uh oh
             e.printStackTrace();
         }
-        return null;
+        return allRecipesList;
     }
 }
