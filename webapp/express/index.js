@@ -16,6 +16,7 @@ var Recipe = conn.model('Recipe', require('./Recipe.js'));
 var User = conn.model('User', require('./User.js'));
 
 var count = 0;
+
 /*************************************************/
 // Endpoints that return HTML 
 /*************************************************/
@@ -62,7 +63,7 @@ app.use('/recipe', (req, res) => {
 	}
 
 	//find the recipe in db
-	var queryObject = {"recipe_id" : req.query.id};
+	var queryObject = {"_id" : req.query.id};
 	Recipe.findOne( queryObject, (err, recipe) => {
 		console.log(recipe);
 		if(err){
@@ -168,7 +169,7 @@ app.use('/clearDatabase', (req, res) => {
 	res.end();
 })
 
-// Create some example recipes and add them to the database
+// Create some example recipes and users and add them to the database
 app.use('/addExamples', (req, res) =>{
 	count ++;
 
@@ -180,9 +181,7 @@ app.use('/addExamples', (req, res) =>{
 		tags: [],
 		list_of_users : []
 	});
-	count ++;
 	var exampleRecipe2 = new Recipe ({
-		recipe_id: count,
 		url: "google.net",
 		description: "bad",
 		name: "chicken ala fake google",
@@ -194,18 +193,17 @@ app.use('/addExamples', (req, res) =>{
 	exampleRecipe2.save((err)=>{if(err){console.log(err)}});
 
 	var exampleUser = new User({
-		User_id: "ruby",
-		Email: "rmalusa@bmc",
-		Saved_recipes:  {
-			"1":[{
-					date: '2022-03-29',
-					rating: 10000,
-					note: "I love chicken ala google"
-				}],
-			"2":[]
-			}
+		google_uid: "horrible long string",
+		Saved_recipes: {}
 		});
+	exampleUser.Saved_recipes.set(exampleRecipe.id, [{
+		date: '2022-03-29',
+		rating: 10000,
+		note: "I love chicken ala google"
+		}]);
 	exampleUser.save((err)=>{if(err){console.log(err)}});
+
+	// To do: add this user to list of users associated with recipe it owns
 
 	res.end();
 })
