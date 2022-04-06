@@ -4,4 +4,5 @@
 </string>
     <string name="header">MongoDB Ream - Authentication by Google Sign In</string>
     <string name="successful_login">Successfully logged In to MongoDB Realm</string>
+    <string name="refresh_data">Refresh Data</string>
 </resources>

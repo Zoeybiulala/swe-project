@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +36,7 @@ public class GlobalRecipeView extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scroll_list);
+        setContentView(R.layout.activity_global_recipe_view);
 
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -119,5 +120,15 @@ public class GlobalRecipeView extends AppCompatActivity {
             e.printStackTrace();
         }
         return allRecipesList;
+    }
+
+    public void refreshGlobalRecipeView(View view) {
+        List<Recipe> allRecipes = getAllRecipes();
+        List<String> allRecipeStrings = new ArrayList<String>();
+        for(int i=0; i<allRecipes.size(); i++){
+            allRecipeStrings.add(allRecipes.get(i).toString());
+        }
+        RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
+        recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, allRecipeStrings));
     }
 }

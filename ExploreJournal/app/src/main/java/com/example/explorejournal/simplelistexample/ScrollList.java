@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.explorejournal.R;
 import com.example.explorejournal.simplelistexample.RecyclerViewStringAdapter;
@@ -37,4 +38,5 @@ public class ScrollList extends AppCompatActivity {
                 ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
     }
+
 }
