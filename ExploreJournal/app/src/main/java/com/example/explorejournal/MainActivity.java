@@ -82,28 +82,9 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println(user.getId());
                         System.out.println("profile" + user.getProfile().getName());
 
-                        MongoClient mongoClient =
-                                user.getMongoClient("mongodb-atlas"); // service for MongoDB Atlas cluster containing custom user data
-                        MongoDatabase mongoDatabase =
-                                mongoClient.getDatabase("custom-user-data-database");
-                        MongoCollection<Document> mongoCollection =
-                                mongoDatabase.getCollection("custom-user-data-collection");
-
-                        /*
-                        ERROR
-                        Unable to insert custom user data. Error: SERVICE_UNKNOWN(realm::app::ServiceError:-1):
-                        no rule exists for namespace 'custom-user-data-database.custom-user-data-collection'
-                         */
-                        mongoCollection.insertOne(
-                                new Document("user-id-field", user.getId()).append("name", user.getProfile().getName()).append("_partition", "partition"))
-                                .getAsync(result -> {
-                                    if (result.isSuccess()) {
-                                        Log.v("EXAMPLE", "Inserted custom user data document. _id of inserted document: "
-                                                + result.get().getInsertedId());
-                                    } else {
-                                        Log.e("EXAMPLE", "Unable to insert custom user data. Error: " + result.getError());
-                                    }
-                                });
+                        // TODO: Now that the android app has the user's id, it can use it to try to
+                        // access the user's data, which will trigger the express app to create a new entry
+                        // if that user does not already have one.
 
                         startActivity(new Intent(this, SampleResult.class));
                         Log.v("AUTH",
