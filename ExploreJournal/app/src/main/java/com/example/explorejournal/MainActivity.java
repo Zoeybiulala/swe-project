@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                         // access the user's data, which will trigger the express app to create a new entry
                         // if that user does not already have one.
 
-                        startActivity(new Intent(this, ExpressExample.class));
+                        startActivity(new Intent(this, GlobalRecipeView.class));
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
                     } else {

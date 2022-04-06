@@ -1,4 +1,4 @@
-package com.example.explorejournal.expressexample;
+package com.example.explorejournal;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class Recipe {
             returnString += users.get(i) + ", ";
         }
         returnString += "\n";
-        returnString += description;
+        returnString += "Description: " + description;
         return returnString;
     }
 }

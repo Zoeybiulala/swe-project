@@ -12,6 +12,9 @@
         android:theme="@style/Theme.ExploreJournal"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".GlobalRecipeView"
+            android:exported="false" />
+        <activity
             android:name=".expressexample.ExpressExample"
             android:exported="false" />
         <activity
