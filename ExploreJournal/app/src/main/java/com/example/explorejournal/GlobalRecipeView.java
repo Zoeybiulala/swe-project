@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import com.example.explorejournal.simplelistexample.RecyclerViewStringListAdapter;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,10 +31,16 @@ public class GlobalRecipeView extends AppCompatActivity {
 
     List<Recipe> allRecipesList;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_global_recipe_view);
+
+        String name = getIntent().getStringExtra("name");
+        String google_uid = getIntent().getStringExtra("google_uid");
+        TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
+        welcomeMessage.setText("Hello, " + name + "!\n(" + google_uid + ")");
 
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

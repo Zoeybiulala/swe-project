@@ -93,7 +93,10 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("profile" + user.getProfile().getName());
                         loggedInUser = user.getId();
 
-                        startActivity(new Intent(this, GlobalRecipeView.class));
+                        Intent loggedInIntent = new Intent(this, GlobalRecipeView.class);
+                        loggedInIntent.putExtra("google_uid", loggedInUser);
+                        loggedInIntent.putExtra("name", user.getProfile().getName());
+                        startActivity(loggedInIntent);
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
                     } else {

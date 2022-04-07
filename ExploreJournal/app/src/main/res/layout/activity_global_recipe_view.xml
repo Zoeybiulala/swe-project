@@ -12,6 +12,13 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/WelcomeMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ExampleRecyclerView"
             android:layout_width="match_parent"

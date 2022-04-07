@@ -3,12 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.17291666666666666" />
+        <entry key="app/src/main/res/layout/activity_example_express.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_express_example.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_global_recipe_view.xml" value="0.21895294189453135" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.15384615384615385" />
         <entry key="app/src/main/res/layout/activity_sample_result.xml" value="0.13958333333333334" />
+        <entry key="app/src/main/res/layout/activity_scroll_list.xml" value="0.18931159420289856" />
+        <entry key="app/src/main/res/layout/example_scroll_row.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/global_recipe_row.xml" value="0.18931159420289856" />
+        <entry key="app/src/main/res/layout/global_recipe_row_2.xml" value="0.18931159420289856" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_12" default="true" project-jdk-name="12.0.2" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
