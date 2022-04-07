@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 
-import com.example.explorejournal.simplelistexample.RecyclerViewStringListAdapter;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -137,7 +134,6 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
 
     public void refreshGlobalRecipeView(View view) {
         getAllRecipes();
-        List<Recipe> allRecipes = allRecipesList;
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         adapter = new GlobalRecipeAdapter(this, allRecipesList);
         adapter.setClickListener(this);
