@@ -21,6 +21,10 @@ public class Recipe {
         this.users = users;
     }
 
+    public String getName(){
+        return name;
+    }
+
     @NonNull
     @Override
     public String toString(){

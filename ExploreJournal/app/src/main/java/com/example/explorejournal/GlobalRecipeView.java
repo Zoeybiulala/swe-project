@@ -19,17 +19,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class GlobalRecipeView extends AppCompatActivity {
+public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
     List<Recipe> allRecipesList;
+    GlobalRecipeAdapter adapter;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -46,17 +49,20 @@ public class GlobalRecipeView extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getAllRecipes();
-        List<String> allRecipeStrings = new ArrayList<>();
-        for(int i=0; i<allRecipesList.size(); i++){
-            allRecipeStrings.add(allRecipesList.get(i).toString());
-        }
-        recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, allRecipeStrings));
+        adapter = new GlobalRecipeAdapter(this, allRecipesList);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
 
         if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                     ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
             recyclerView.addItemDecoration(dividerItemDecoration);
         }
+    }
+
+    @Override
+    public void onItemClick(View view, int position) {
+        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
     // Fetch JSON array of recipes from server, convert it into a list of Recipe objects,
@@ -132,11 +138,9 @@ public class GlobalRecipeView extends AppCompatActivity {
     public void refreshGlobalRecipeView(View view) {
         getAllRecipes();
         List<Recipe> allRecipes = allRecipesList;
-        List<String> allRecipeStrings = new ArrayList<>();
-        for(int i=0; i<allRecipes.size(); i++){
-            allRecipeStrings.add(allRecipes.get(i).toString());
-        }
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
-        recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, allRecipeStrings));
+        adapter = new GlobalRecipeAdapter(this, allRecipesList);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
     }
 }
