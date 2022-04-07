@@ -17,8 +17,8 @@ public class RecyclerViewStringListAdapter extends RecyclerView.Adapter<Recycler
 
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
-    private LayoutInflater inflater;
-    private List<String> data;
+    private final LayoutInflater inflater;
+    private final List<String> data;
 
     public RecyclerViewStringListAdapter(Context context, List<String> data){
         this.inflater = LayoutInflater.from(context);
@@ -37,7 +37,6 @@ public class RecyclerViewStringListAdapter extends RecyclerView.Adapter<Recycler
     // so we do any modifications necessary to give it the data for that spot
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.innerTextView.setText(data.get(position));
-        return;
     }
 
     @Override
@@ -45,7 +44,7 @@ public class RecyclerViewStringListAdapter extends RecyclerView.Adapter<Recycler
         return data.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
 
         TextView innerTextView;
 

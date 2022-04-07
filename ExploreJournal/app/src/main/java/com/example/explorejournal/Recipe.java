@@ -1,5 +1,7 @@
 package com.example.explorejournal;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 public class Recipe {
@@ -19,6 +21,7 @@ public class Recipe {
         this.users = users;
     }
 
+    @NonNull
     @Override
     public String toString(){
         String returnString = "ID: " + id + "/URL: " + url + "/Name: " + name + "\n";

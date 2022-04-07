@@ -4,13 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Bundle;
-import android.view.View;
 
 import com.example.explorejournal.R;
-import com.example.explorejournal.simplelistexample.RecyclerViewStringAdapter;
-
 import java.util.LinkedList;
 
 public class ScrollList extends AppCompatActivity {
@@ -28,15 +24,21 @@ public class ScrollList extends AppCompatActivity {
         // Create fixed text
         // recyclerView.setAdapter(new RecyclerViewStringAdapter(this));
 
-        LinkedList<String> exampleData = new LinkedList<String>();
+        LinkedList<String> exampleData = new LinkedList<>();
         for(int i=0; i<100; i++){
             exampleData.add(Integer.toString(i));
         }
         recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, exampleData));
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                    ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
+            recyclerView.addItemDecoration(dividerItemDecoration);
+        }
+
+
+
+
     }
 
 }

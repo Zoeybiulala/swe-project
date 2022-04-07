@@ -7,21 +7,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 
-import com.example.explorejournal.R;
-import com.example.explorejournal.simplelistexample.RecyclerViewStringAdapter;
 import com.example.explorejournal.simplelistexample.RecyclerViewStringListAdapter;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
@@ -41,20 +37,23 @@ public class GlobalRecipeView extends AppCompatActivity {
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        List<Recipe> allRecipes = getAllRecipes();
-        List<String> allRecipeStrings = new ArrayList<String>();
-        for(int i=0; i<allRecipes.size(); i++){
-            allRecipeStrings.add(allRecipes.get(i).toString());
+        getAllRecipes();
+        List<String> allRecipeStrings = new ArrayList<>();
+        for(int i=0; i<allRecipesList.size(); i++){
+            allRecipeStrings.add(allRecipesList.get(i).toString());
         }
         recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, allRecipeStrings));
 
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                    ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
+            recyclerView.addItemDecoration(dividerItemDecoration);
+        }
     }
 
-    // Fetch JSON array of recipes from server, and convert it into a list of Recipe objects
-    public List<Recipe> getAllRecipes(){
+    // Fetch JSON array of recipes from server, convert it into a list of Recipe objects,
+    // and store in the allRecipes field
+    public void getAllRecipes(){
 
         try {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -73,7 +72,7 @@ public class GlobalRecipeView extends AppCompatActivity {
                                 throw new IllegalStateException();
                             }
 
-                            List<Recipe> allRecipes = new ArrayList<Recipe>();
+                            List<Recipe> allRecipes = new ArrayList<>();
 
                             Scanner in = new Scanner(url.openStream());
                             while(in.hasNext()){
@@ -88,8 +87,8 @@ public class GlobalRecipeView extends AppCompatActivity {
                                     JSONArray jsonTags = jsonRecipe.getJSONArray("tags");
                                     JSONArray jsonUsers = jsonRecipe.getJSONArray("list_of_users");
                                     // Parse json array of tags into list of strings
-                                    List<String> tags = new ArrayList<String>();
-                                    List<String> users = new ArrayList<String>();
+                                    List<String> tags = new ArrayList<>();
+                                    List<String> users = new ArrayList<>();
                                     for(int j=0; j<jsonTags.length(); j++){
                                         tags.add(jsonTags.getString(j));
                                     }
@@ -110,21 +109,22 @@ public class GlobalRecipeView extends AppCompatActivity {
                     }
             );
 
-            // this waits for up to 2 seconds
-            // it's a bit of a hack because it's not truly asynchronous
-            // but it should be okay for our purposes (and is a lot easier)
-            executor.awaitTermination(2, TimeUnit.SECONDS);
+            executor.shutdown();
+            boolean timeout = executor.awaitTermination(2, TimeUnit.SECONDS);
+            if(timeout){
+                Log.v("Timeout", "timeout in GlobalRecipeView");
+            }
         }
         catch (Exception e) {
             // uh oh
             e.printStackTrace();
         }
-        return allRecipesList;
     }
 
     public void refreshGlobalRecipeView(View view) {
-        List<Recipe> allRecipes = getAllRecipes();
-        List<String> allRecipeStrings = new ArrayList<String>();
+        getAllRecipes();
+        List<Recipe> allRecipes = allRecipesList;
+        List<String> allRecipeStrings = new ArrayList<>();
         for(int i=0; i<allRecipes.size(); i++){
             allRecipeStrings.add(allRecipes.get(i).toString());
         }

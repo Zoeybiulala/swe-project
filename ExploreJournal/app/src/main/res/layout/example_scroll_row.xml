@@ -7,7 +7,7 @@
         android:id="@+id/FixedTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="example text">
+        android:text="@string/example_text">
 
     </TextView>
 

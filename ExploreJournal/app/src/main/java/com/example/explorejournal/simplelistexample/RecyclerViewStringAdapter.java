@@ -14,7 +14,7 @@ public class RecyclerViewStringAdapter extends RecyclerView.Adapter<RecyclerView
 
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
-    private LayoutInflater mInflater;
+    private final LayoutInflater mInflater;
 
     public RecyclerViewStringAdapter(Context context){
         this.mInflater = LayoutInflater.from(context);
@@ -30,7 +30,6 @@ public class RecyclerViewStringAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         // We would set the data here if it were not a fixed string
-        return;
     }
 
     @Override
@@ -38,7 +37,7 @@ public class RecyclerViewStringAdapter extends RecyclerView.Adapter<RecyclerView
         return 100;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
         }

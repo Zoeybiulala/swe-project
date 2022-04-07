@@ -20,7 +20,6 @@
         <activity
             android:name=".simplelistexample.ScrollList"
             android:exported="false" />
-        <activity android:name=".SampleResult" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
