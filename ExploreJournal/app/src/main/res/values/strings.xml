@@ -2,6 +2,9 @@
     <string name="app_name">Explore Journal</string>
     <string name="server_client_id"> 734218205000-s5p82l31oa4mvrknklemia53407jclc7.apps.googleusercontent.com
 </string>
-    <string name="header">MongoDB Ream - Authentication by Google Sign In</string>
+    <string name="header">Recipe Journal</string>
     <string name="successful_login">Successfully logged In to MongoDB Realm</string>
+    <string name="refresh_data">Refresh Data</string>
+    <string name="server_not_running_at_launch">Server not running at launch</string>
+    <string name="example_text">example text</string>
 </resources>

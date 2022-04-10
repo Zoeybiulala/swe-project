@@ -1,5 +1,7 @@
 package com.example.explorejournal;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 public class Recipe {
@@ -19,20 +21,25 @@ public class Recipe {
         this.users = users;
     }
 
+    public String getName(){
+        return name;
+    }
+
+    @NonNull
     @Override
     public String toString(){
-        String returnString = "ID: " + id + "/URL: " + url + "/Name: " + name + "\n";
-        returnString += "Tags: ";
+        StringBuilder returnString = new StringBuilder("ID: " + id + "/URL: " + url + "/Name: " + name + "\n");
+        returnString.append("Tags: ");
         for(int i=0; i<tags.size(); i++){
-            returnString += tags.get(i) + ", ";
+            returnString.append(tags.get(i)).append(", ");
         }
-        returnString += "\n";
-        returnString += "Users: ";
+        returnString.append("\n");
+        returnString.append("Users: ");
         for(int i=0; i<users.size(); i++){
-            returnString += users.get(i) + ", ";
+            returnString.append(users.get(i)).append(", ");
         }
-        returnString += "\n";
-        returnString += "Description: " + description;
-        return returnString;
+        returnString.append("\n");
+        returnString.append("Description: ").append(description);
+        return returnString.toString();
     }
 }

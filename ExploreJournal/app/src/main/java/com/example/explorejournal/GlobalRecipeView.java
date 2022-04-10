@@ -5,58 +5,66 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import com.example.explorejournal.R;
-import com.example.explorejournal.simplelistexample.RecyclerViewStringAdapter;
-import com.example.explorejournal.simplelistexample.RecyclerViewStringListAdapter;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class GlobalRecipeView extends AppCompatActivity {
+public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
     List<Recipe> allRecipesList;
+    GlobalRecipeAdapter adapter;
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scroll_list);
+        setContentView(R.layout.activity_global_recipe_view);
+
+        String name = getIntent().getStringExtra("name");
+        String google_uid = getIntent().getStringExtra("google_uid");
+        TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
+        welcomeMessage.setText("Hello, " + name + "!\n(" + google_uid + ")");
 
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        List<Recipe> allRecipes = getAllRecipes();
-        List<String> allRecipeStrings = new ArrayList<String>();
+        getAllRecipes();
+        adapter = new GlobalRecipeAdapter(this, allRecipesList);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
 
-        if (allRecipes != null) {
-            for(int i=0; i<allRecipes.size(); i++){
-                allRecipeStrings.add(allRecipes.get(i).toString());
-            }
+        if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
+            DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                    ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
+            recyclerView.addItemDecoration(dividerItemDecoration);
         }
-        recyclerView.setAdapter(new RecyclerViewStringListAdapter(this, allRecipeStrings));
-
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
-    // Fetch JSON array of recipes from server, and convert it into a list of Recipe objects
-    public List<Recipe> getAllRecipes(){
+    @Override
+    public void onItemClick(View view, int position) {
+        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+    }
+
+    // Fetch JSON array of recipes from server, convert it into a list of Recipe objects,
+    // and store in the allRecipes field
+    public void getAllRecipes(){
 
         try {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -75,7 +83,7 @@ public class GlobalRecipeView extends AppCompatActivity {
                                 throw new IllegalStateException();
                             }
 
-                            List<Recipe> allRecipes = new ArrayList<Recipe>();
+                            List<Recipe> allRecipes = new ArrayList<>();
 
                             Scanner in = new Scanner(url.openStream());
                             while(in.hasNext()){
@@ -90,8 +98,8 @@ public class GlobalRecipeView extends AppCompatActivity {
                                     JSONArray jsonTags = jsonRecipe.getJSONArray("tags");
                                     JSONArray jsonUsers = jsonRecipe.getJSONArray("list_of_users");
                                     // Parse json array of tags into list of strings
-                                    List<String> tags = new ArrayList<String>();
-                                    List<String> users = new ArrayList<String>();
+                                    List<String> tags = new ArrayList<>();
+                                    List<String> users = new ArrayList<>();
                                     for(int j=0; j<jsonTags.length(); j++){
                                         tags.add(jsonTags.getString(j));
                                     }
@@ -112,15 +120,23 @@ public class GlobalRecipeView extends AppCompatActivity {
                     }
             );
 
-            // this waits for up to 2 seconds
-            // it's a bit of a hack because it's not truly asynchronous
-            // but it should be okay for our purposes (and is a lot easier)
-            executor.awaitTermination(2, TimeUnit.SECONDS);
+            executor.shutdown();
+            boolean timeout = executor.awaitTermination(2, TimeUnit.SECONDS);
+            if(timeout){
+                Log.v("Timeout", "timeout in GlobalRecipeView");
+            }
         }
         catch (Exception e) {
             // uh oh
             e.printStackTrace();
         }
-        return allRecipesList;
+    }
+
+    public void refreshGlobalRecipeView(View view) {
+        getAllRecipes();
+        RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
+        adapter = new GlobalRecipeAdapter(this, allRecipesList);
+        adapter.setClickListener(this);
+        recyclerView.setAdapter(adapter);
     }
 }

@@ -78,6 +78,11 @@ app.use('/users', (req, res) => {
 	});
 });
 
+app.use('/ping', (req,res) => {
+	console.log("ping"); 
+	res.json({"status":"success"})
+	});
+
 /*************************************************/
 // Endpoints used for testing 
 /*************************************************/
