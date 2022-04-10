@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signIn() {
-        System.out.println("here");
         Intent signInIntent = googleSignInClient.getSignInIntent();
 
         resultLauncher.launch(signInIntent);
