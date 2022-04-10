@@ -8,10 +8,11 @@ var attemptSchema = new Schema({
     });
 
 var userSchema = new Schema({
-    Email: {type: String, required: true, unique: true},
+    google_uid: {type: String, required: true, unique: true},
     Saved_recipes:  {
        type: Map,
-       of: [attemptSchema]
+       of: [attemptSchema],
+       required: true
         }
     });
     

@@ -6,7 +6,7 @@ var recipeSchema = new Schema({
         description: {type: String, required: true},
         name: {type: String, required: true},
         tags: {type: [String], required: false},
-        list_of_users : {type: [String], required: false}, // Stores list of unique user string IDs 
+        list_of_users : {type: [String], required: false}, // Stores list of unique user google IDs 
     });
 
 module.exports = recipeSchema;
