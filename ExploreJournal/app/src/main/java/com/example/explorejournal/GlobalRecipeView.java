@@ -1,11 +1,14 @@
 package com.example.explorejournal;
 
+import static com.example.explorejournal.RealmApp.app;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 
 import java.net.HttpURLConnection;
@@ -18,12 +21,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import io.realm.mongodb.User;
+import io.realm.mongodb.sync.SyncSession;
 
 public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
@@ -138,5 +148,31 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
         adapter = new GlobalRecipeAdapter(this, allRecipesList);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
+    }
+
+    // sign out
+    @Override
+    public boolean onCreateOptionsMenu( Menu menu ) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.miLogout) {
+            Log.i("AUTH", "Logout");
+            User user = app.currentUser();
+            user.logOutAsync( result -> {
+                if (result.isSuccess()) {
+                    Log.v("AUTH", "Successfully logged out.");
+                } else {
+                    Log.e("AUTH", result.getError().toString());
+                }
+            });
+            Intent loggedOutIntent = new Intent(this, MainActivity.class);
+            startActivity(loggedOutIntent);
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
