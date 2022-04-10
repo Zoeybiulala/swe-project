@@ -62,7 +62,7 @@ app.use('/recipe', (req, res) => {
 	}
 
 	//find the recipe in db
-	var queryObject = {"recipe_id" : req.query.id};
+	var queryObject = {"_id" : req.query.id};
 	Recipe.findOne( queryObject, (err, recipe) => {
 		console.log(recipe);
 		if(err){
