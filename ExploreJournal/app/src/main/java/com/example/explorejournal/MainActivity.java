@@ -2,17 +2,18 @@ package com.example.explorejournal;
 
 import static com.example.explorejournal.RealmApp.app;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 
+import com.example.explorejournal.expressexample.ExpressExample;
+import com.example.explorejournal.simplelistexample.ScrollList;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -20,14 +21,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
-import org.bson.Document;
-
 import io.realm.mongodb.Credentials;
 import io.realm.mongodb.User;
 import io.realm.mongodb.auth.GoogleAuthType;
-import io.realm.mongodb.mongo.MongoClient;
-import io.realm.mongodb.mongo.MongoCollection;
-import io.realm.mongodb.mongo.MongoDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,35 +73,15 @@ public class MainActivity extends AppCompatActivity {
 
                         // TODO: update UI method, follow https://www.youtube.com/watch?v=k0TUwjxr8LE
 
-                        // TODO code to insert user into database!
                         User user = app.currentUser();
                         System.out.println(user.getId());
                         System.out.println("profile" + user.getProfile().getName());
 
-                        MongoClient mongoClient =
-                                user.getMongoClient("mongodb-atlas"); // service for MongoDB Atlas cluster containing custom user data
-                        MongoDatabase mongoDatabase =
-                                mongoClient.getDatabase("exploreJournalDb");
-                        MongoCollection<Document> mongoCollection =
-                                mongoDatabase.getCollection("users");
+                        // TODO: Now that the android app has the user's id, it can use it to try to
+                        // access the user's data, which will trigger the express app to create a new entry
+                        // if that user does not already have one.
 
-                        /*
-                        ERROR
-                        Unable to insert custom user data. Error: SERVICE_UNKNOWN(realm::app::ServiceError:-1):
-                        no rule exists for namespace 'custom-user-data-database.custom-user-data-collection'
-                         */
-                        mongoCollection.insertOne(
-                                new Document("user-id-field", user.getId()).append("name", user.getProfile().getName()).append("_partition", "partition"))
-                                .getAsync(result -> {
-                                    if (result.isSuccess()) {
-                                        Log.v("EXAMPLE", "Inserted custom user data document. _id of inserted document: "
-                                                + result.get().getInsertedId());
-                                    } else {
-                                        Log.e("EXAMPLE", "Unable to insert custom user data. Error: " + result.getError());
-                                    }
-                                });
-
-                        startActivity(new Intent(this, SampleResult.class));
+                        startActivity(new Intent(this, GlobalRecipeView.class));
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
                     } else {
