@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import java.net.HttpURLConnection;
@@ -19,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +58,9 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
                     ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
             recyclerView.addItemDecoration(dividerItemDecoration);
         }
+
+        Button here = findViewById(R.id.nav_button_global_recipes);
+        here.setBackgroundColor(getResources().getColor(R.color.purple_light));
     }
 
     @Override

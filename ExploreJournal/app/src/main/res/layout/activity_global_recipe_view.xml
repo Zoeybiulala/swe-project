@@ -35,6 +35,8 @@
             android:text="@string/refresh_data"
             tools:ignore="UsingOnClickInXml" />
 
+        <include layout="@layout/bottom_nav_buttons"/>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
