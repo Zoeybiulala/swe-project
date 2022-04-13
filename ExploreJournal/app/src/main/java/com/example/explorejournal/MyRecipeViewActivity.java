@@ -1,14 +1,20 @@
 package com.example.explorejournal;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -19,26 +25,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
+public class MyRecipeViewActivity extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
-    List<Recipe> allRecipesList;
+    List<Recipe> myRecipesList;
     GlobalRecipeAdapter adapter;
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_global_recipe_view);
+        setContentView(R.layout.activity_my_recipe_view);
 
         String name = getIntent().getStringExtra("name");
         String google_uid = getIntent().getStringExtra("google_uid");
@@ -48,8 +45,8 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        getAllRecipes();
-        adapter = new GlobalRecipeAdapter(this, allRecipesList);
+        getMyRecipes();
+        adapter = new GlobalRecipeAdapter(this, myRecipesList);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -59,7 +56,7 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
             recyclerView.addItemDecoration(dividerItemDecoration);
         }
 
-        Button here = findViewById(R.id.nav_button_global_recipes);
+        Button here = findViewById(R.id.nav_button_my_recipes);
         here.setBackgroundColor(getResources().getColor(R.color.purple_light));
     }
 
@@ -69,8 +66,8 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
     }
 
     // Fetch JSON array of recipes from server, convert it into a list of Recipe objects,
-    // and store in the allRecipes field
-    public void getAllRecipes(){
+    // and store in the myRecipes field
+    public void getMyRecipes(){
 
         try {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -117,7 +114,7 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
                                 }
                             }
 
-                            allRecipesList = allRecipes;
+                            myRecipesList = allRecipes;
 
                         }
                         catch (Exception e) {
@@ -138,11 +135,13 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
         }
     }
 
-    public void refreshGlobalRecipeView(View view) {
-        getAllRecipes();
-        RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
-        adapter = new GlobalRecipeAdapter(this, allRecipesList);
-        adapter.setClickListener(this);
-        recyclerView.setAdapter(adapter);
+    public void onNavButtonClick(View view) {
+        if(view.getId() == R.id.nav_button_global_recipes){
+            finish();
+        } else if(view.getId() == R.id.nav_button_global_recipes) {
+            // Nothing
+        }
     }
+
+
 }

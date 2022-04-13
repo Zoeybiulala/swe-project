@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("profile" + user.getProfile().getName());
                         loggedInUser = user.getId();
 
-                        Intent loggedInIntent = new Intent(this, GlobalRecipeView.class);
+                        Intent loggedInIntent = new Intent(this, GlobalRecipeViewActivity.class);
                         loggedInIntent.putExtra("google_uid", loggedInUser);
                         loggedInIntent.putExtra("name", user.getProfile().getName());
                         startActivity(loggedInIntent);
