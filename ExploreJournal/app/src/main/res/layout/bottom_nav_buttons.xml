@@ -5,15 +5,6 @@
     style="?android:attr/buttonBarStyle">
 
     <Button
-        android:id="@+id/nav_button_global_recipes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/all_recipes"
-        android:onClick="onNavButtonClick"
-        style="?android:attr/buttonBarButtonStyle" />
-
-    <Button
         android:id="@+id/nav_button_my_recipes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,5 +12,14 @@
         android:text="@string/my_recipes"
         android:onClick="onNavButtonClick"
         style="?android:attr/buttonBarButtonStyle"/>
+
+    <Button
+        android:id="@+id/nav_button_global_recipes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/all_recipes"
+        android:onClick="onNavButtonClick"
+        style="?android:attr/buttonBarButtonStyle" />
 
 </LinearLayout>

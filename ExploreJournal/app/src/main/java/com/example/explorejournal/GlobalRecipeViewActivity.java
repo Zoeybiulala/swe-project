@@ -153,10 +153,7 @@ public class GlobalRecipeViewActivity extends AppCompatActivity implements Globa
         if(view.getId() == R.id.nav_button_global_recipes){
             return;
         } else if(view.getId() == R.id.nav_button_my_recipes) {
-            Intent loggedInIntent = new Intent(this, MyRecipeViewActivity.class);
-            loggedInIntent.putExtra("google_uid", loggedInGoogleUID);
-            loggedInIntent.putExtra("name", loggedInName);
-            startActivity(loggedInIntent);
+            finish();
         }
     }
 

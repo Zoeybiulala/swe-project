@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println("profile" + user.getProfile().getName());
                         loggedInUser = user.getId();
 
-                        Intent loggedInIntent = new Intent(this, GlobalRecipeViewActivity.class);
+                        Intent loggedInIntent = new Intent(this, MyRecipeViewActivity.class);
                         loggedInIntent.putExtra("google_uid", loggedInUser);
                         loggedInIntent.putExtra("name", user.getProfile().getName());
                         startActivity(loggedInIntent);

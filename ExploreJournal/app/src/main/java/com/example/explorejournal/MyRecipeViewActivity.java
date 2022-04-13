@@ -1,6 +1,7 @@
 package com.example.explorejournal;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,11 +26,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class MyRecipeViewActivity extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
+public class MyRecipeViewActivity extends AppCompatActivity implements MyRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
     List<Recipe> myRecipesList;
-    GlobalRecipeAdapter adapter;
+    MyRecipeAdapter adapter;
+    String loggedInName;
+    String loggedInGoogleUID;
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -37,16 +40,16 @@ public class MyRecipeViewActivity extends AppCompatActivity implements GlobalRec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_recipe_view);
 
-        String name = getIntent().getStringExtra("name");
-        String google_uid = getIntent().getStringExtra("google_uid");
+        loggedInName = getIntent().getStringExtra("name");
+        loggedInGoogleUID = getIntent().getStringExtra("google_uid");
         TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
-        welcomeMessage.setText("Hello, " + name + "!\n(" + google_uid + ")");
+        welcomeMessage.setText("Hello, " + loggedInName + "!\n(" + loggedInGoogleUID + ")");
 
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getMyRecipes();
-        adapter = new GlobalRecipeAdapter(this, myRecipesList);
+        adapter = new MyRecipeAdapter(this, myRecipesList);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
@@ -126,7 +129,7 @@ public class MyRecipeViewActivity extends AppCompatActivity implements GlobalRec
             executor.shutdown();
             boolean timeout = executor.awaitTermination(2, TimeUnit.SECONDS);
             if(timeout){
-                Log.v("Timeout", "timeout in GlobalRecipeView");
+                Log.v("Timeout", "timeout in MyRecipeView");
             }
         }
         catch (Exception e) {
@@ -137,7 +140,10 @@ public class MyRecipeViewActivity extends AppCompatActivity implements GlobalRec
 
     public void onNavButtonClick(View view) {
         if(view.getId() == R.id.nav_button_global_recipes){
-            finish();
+            Intent loggedInIntent = new Intent(this, GlobalRecipeViewActivity.class);
+            loggedInIntent.putExtra("google_uid", loggedInGoogleUID);
+            loggedInIntent.putExtra("name", loggedInName);
+            startActivity(loggedInIntent);
         } else if(view.getId() == R.id.nav_button_global_recipes) {
             // Nothing
         }
