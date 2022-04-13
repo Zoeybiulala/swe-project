@@ -162,6 +162,41 @@ app.use('/ping', (req,res) => {
 	res.json({"status":"success"})
 	});
 
+app.use('/checklogin', (req, res) => {
+	
+	console.log("checking login");
+	
+	//no id 
+	if(!req.query.id) {
+		res.json({"status":"invalid parameters"});
+	}
+
+	console.log(req.query.id);
+
+	//find the user in db
+	var queryObject = {"google_uid" : req.query.id};
+	User.findOne( queryObject, (err, user) => {
+		console.log(user);
+		if(err){
+			res.json({"status":"error"});
+		} else {
+			if(!user) {
+				console.log("Adding new user");
+				// Add user to database 
+				var newUser = new User({
+					google_uid: req.query.id,
+					Saved_recipes: {}
+					});
+				newUser.save((err)=>{if(err){console.log(err)}});
+				res.json({"status":"user created"});
+			} else {
+				console.log("User already exists");
+				res.json({"status":"user exists"});
+			}
+		}
+	})	
+})
+
 /*************************************************/
 // Endpoints used for testing 
 /*************************************************/
