@@ -77,7 +77,7 @@ public class MyRecipeViewActivity extends AppCompatActivity implements MyRecipeA
             executor.execute( () -> {
                         try {
 
-                            URL url = new URL("http://10.0.2.2:3000/api");
+                            URL url = new URL("http://10.0.2.2:3000/myrecipes?id=" + loggedInGoogleUID);
 
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setRequestMethod("GET");
@@ -94,7 +94,7 @@ public class MyRecipeViewActivity extends AppCompatActivity implements MyRecipeA
                             Scanner in = new Scanner(url.openStream());
                             while(in.hasNext()){
                                 String line = in.nextLine();
-                                JSONArray data = new JSONArray(line);
+                                JSONArray data = new JSONObject(line).getJSONArray("data");
                                 for(int i=0; i<data.length(); i++){
                                     JSONObject jsonRecipe = data.getJSONObject(i);
                                     String id = jsonRecipe.getString("_id");

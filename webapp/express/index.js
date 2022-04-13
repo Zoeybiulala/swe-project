@@ -185,13 +185,51 @@ app.use('/checklogin', (req, res) => {
 				// Add user to database 
 				var newUser = new User({
 					google_uid: req.query.id,
-					Saved_recipes: {}
+					saved_recipes: {}
 					});
 				newUser.save((err)=>{if(err){console.log(err)}});
 				res.json({"status":"user created"});
 			} else {
 				console.log("User already exists");
 				res.json({"status":"user exists"});
+			}
+		}
+	})	
+})
+
+app.use('/myrecipes', (req, res) => {
+	
+	//no id 
+	if(!req.query.id) {
+		res.json({"status":"error"});
+		return;
+	}
+
+	//find the user in db
+	var queryObject = {"google_uid" : req.query.id};
+	User.findOne( queryObject, (err, user) => {
+		if(err){
+			res.json({"status":"error"});
+		} else {
+			if(!user) {
+				res.json({"status":"error"});
+			} else {
+				recipeKeys = user.saved_recipes.keys();
+				let result = recipeKeys.next();
+				var recipeKeyArray = [];
+
+				while (!result.done) {
+					recipeKeyArray.push(result.value);
+					result = recipeKeys.next();
+				}
+
+				Recipe.find({"_id":{ $in: recipeKeyArray}}, (err, recipes) => {
+					if(err){	
+						console.log(err);
+					} else {
+						res.json({"status":"success", "data":recipes});
+					}
+				});
 			}
 		}
 	})	
@@ -233,10 +271,10 @@ app.use('/addExamples', (req, res) =>{
 	exampleRecipe2.save((err)=>{if(err){console.log(err)}});
 
 	var exampleUser = new User({
-		google_uid: "horrible long string",
-		Saved_recipes: {}
+		google_uid: "example",
+		saved_recipes: {}
 		});
-	exampleUser.Saved_recipes.set(exampleRecipe.id, [{
+	exampleUser.saved_recipes.set(exampleRecipe.id, [{
 		date: '2022-03-29',
 		rating: 10000,
 		note: "I love chicken ala google"
