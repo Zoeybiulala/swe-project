@@ -172,6 +172,8 @@ public class GlobalRecipeView extends AppCompatActivity implements GlobalRecipeA
             Intent loggedOutIntent = new Intent(this, MainActivity.class);
             startActivity(loggedOutIntent);
 
+            // TODO finish()
+
         }
         return super.onOptionsItemSelected(item);
     }
