@@ -225,7 +225,7 @@ app.use('/checklogin', (req, res) => {
 				newUser.save((err)=>{if(err){console.log(err)}});
 				res.json({"status":"success", "action":"user created"});
 			} else {
-				res.json({"status":"success", "action":});
+				res.json({"status":"success", "action":"none"});
 			}
 		}
 	})	
