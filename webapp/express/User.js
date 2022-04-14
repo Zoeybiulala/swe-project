@@ -9,7 +9,7 @@ var attemptSchema = new Schema({
 
 var userSchema = new Schema({
     google_uid: {type: String, required: true, unique: true},
-    Saved_recipes:  {
+    saved_recipes:  {
        type: Map,
        of: [attemptSchema],
        required: true

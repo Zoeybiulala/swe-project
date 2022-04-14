@@ -2,26 +2,27 @@ package com.example.explorejournal;
 
 import static com.example.explorejournal.RealmApp.app;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-
+import org.json.JSONObject;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -58,12 +59,15 @@ public class MainActivity extends AppCompatActivity {
                             handleSignInResult(task);
                         });
 
-        findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener)(it -> MainActivity.this.signIn()));
+        findViewById(R.id.sign_in_button).setOnClickListener((it -> MainActivity.this.signIn()));
 
         // Check if server is running
         if(ping()){
             TextView serverRunning = findViewById(R.id.server_status);
             serverRunning.setText("Server running at launch");
+        } else {
+            SignInButton login = findViewById(R.id.sign_in_button);
+            login.setEnabled(false);
         }
     }
 
@@ -84,15 +88,15 @@ public class MainActivity extends AppCompatActivity {
                 app.loginAsync(googleCredentials, it -> {
                     if (it.isSuccess()) {
 
-                        // TODO: update UI method, follow https://www.youtube.com/watch?v=k0TUwjxr8LE
-
                         User user = app.currentUser();
                         assert user != null;
                         System.out.println(user.getId());
                         System.out.println("profile" + user.getProfile().getName());
                         loggedInUser = user.getId();
 
-                        Intent loggedInIntent = new Intent(this, GlobalRecipeView.class);
+                        checkLogin(loggedInUser);
+
+                        Intent loggedInIntent = new Intent(this, MyRecipeViewActivity.class);
                         loggedInIntent.putExtra("google_uid", loggedInUser);
                         loggedInIntent.putExtra("name", user.getProfile().getName());
                         startActivity(loggedInIntent);
@@ -112,6 +116,51 @@ public class MainActivity extends AppCompatActivity {
         } catch (ApiException e) {
             Log.w("AUTH", "Failed to log in with Google OAuth: " + e.getMessage());
             // TODO toast
+        }
+    }
+
+    // Connect to database and check if user exists, creating new empty user if not
+    private void checkLogin(String loggedInUser) {
+        try {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute( () -> {
+                try {
+                    URL url = new URL("http://10.0.2.2:3000/checklogin?id=" + loggedInUser);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("GET");
+                    conn.connect();
+
+                    Log.v("checklogin", "here");
+
+                    // Handle response
+                    int responseCode = conn.getResponseCode();
+                    if(responseCode != 200){
+                        throw new IllegalStateException();
+                    }
+
+                    Log.v("checklogin", "here2");
+
+                    Scanner in = new Scanner(conn.getInputStream());
+                    Log.v("checklogin", in.hasNext() + " ");
+                    while(in.hasNext()){
+                        String line = in.nextLine();
+                        JSONObject status = new JSONObject(line);
+                        Log.v("checklogin", status.toString());
+                    }
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            );
+
+            // Returns true if, after telling executor to shutdown,
+            // all tasks are done in 2 seconds, AND connection didn't throw error
+            executor.shutdown();
+        }
+        catch (Exception e) {
+            // uh oh
+            e.printStackTrace();
         }
     }
 

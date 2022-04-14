@@ -7,4 +7,7 @@
     <string name="refresh_data">Refresh Data</string>
     <string name="server_not_running_at_launch">Server not running at launch</string>
     <string name="example_text">example text</string>
+    <string name="all_recipes">All Recipes</string>
+    <string name="my_recipes">My Saved Recipes</string>
+    <string name="empty_myrecipes">You haven\'t saved any recipes.</string>
 </resources>
