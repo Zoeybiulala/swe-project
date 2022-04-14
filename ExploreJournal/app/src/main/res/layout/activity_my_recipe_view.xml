@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GlobalRecipeView">
+    tools:context=".MyRecipeViewActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,14 +26,6 @@
             android:layout_weight="1">
 
         </androidx.recyclerview.widget.RecyclerView>
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="refreshGlobalRecipeView"
-            android:text="@string/refresh_data"
-            tools:ignore="UsingOnClickInXml" />
 
         <include layout="@layout/bottom_nav_buttons"/>
 

@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 // Used to render recipes in the global list
-public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapter.ViewHolder>{
+public class MyRecipeAdapter extends RecyclerView.Adapter<MyRecipeAdapter.ViewHolder>{
 
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
@@ -20,36 +20,45 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
     private final List<Recipe> data;
     private ItemClickListener clickListener;
 
-    public GlobalRecipeAdapter(Context context, List<Recipe> data){
+    public MyRecipeAdapter(Context context, List<Recipe> data){
         this.inflater = LayoutInflater.from(context);
         this.data = data;
     }
 
     @NonNull
     @Override
-    public GlobalRecipeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = inflater.inflate(R.layout.global_recipe_view, parent, false);
-        return new GlobalRecipeAdapter.ViewHolder(view);
+    public MyRecipeAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = inflater.inflate(R.layout.my_recipe_view, parent, false);
+        return new MyRecipeAdapter.ViewHolder(view);
     }
 
     @Override
     // This function executes when the holder is assigned to position 'position'
     // so we do any modifications necessary to give it the data for that spot
-    public void onBindViewHolder(@NonNull GlobalRecipeAdapter.ViewHolder holder, int position) {
-        holder.recipeNameView.setText(data.get(position).getName());
+    public void onBindViewHolder(@NonNull MyRecipeAdapter.ViewHolder holder, int position) {
+        if(data.size() == 0){
+            holder.recipeNameView.setText(R.string.empty_myrecipes);
+        } else {
+            holder.recipeNameView.setText(data.get(position).getName());
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        if (data == null) {
-            return 0;
+        if(data.size() == 0){
+            return 1;
         } else {
             return data.size();
         }
     }
 
     public Recipe getItem(int position) {
-        return data.get(position);
+        if(data.size() == 0){
+            return null;
+        } else {
+            return data.get(position);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
