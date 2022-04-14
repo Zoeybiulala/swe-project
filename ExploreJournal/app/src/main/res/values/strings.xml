@@ -9,4 +9,5 @@
     <string name="example_text">example text</string>
     <string name="all_recipes">All Recipes</string>
     <string name="my_recipes">My Saved Recipes</string>
+    <string name="empty_myrecipes">You haven\'t saved any recipes.</string>
 </resources>

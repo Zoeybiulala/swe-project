@@ -134,11 +134,9 @@ app.use('/api', (req, res) => {
 	Recipe.find({}, (err, recipes) => {
 		if(err){
 			console.log(err);
-			res.type('html').status(200);
-			console.log('uh oh' + err);
-			res.write(err);
+			res.json({"status":"error"});
 		} else {
-			res.json(recipes);
+			res.json({"status":"success", "data":recipes});
 		}
 	});
 
@@ -148,30 +146,24 @@ app.use('/users', (req, res) => {
 	User.find({}, (err, users) => {
 		if(err){
 			console.log(err);
-			res.type('html').status(200);
-			console.log('uh oh' + err);
-			res.write(err);
+			res.json({"status":"error"});			
 		} else {
-			res.json(users);
+			res.json({"status":"success", "data":users});
 		}
 	});
 });
 
 app.use('/ping', (req,res) => {
 	console.log("ping"); 
-	res.json({"status":"success"})
+		res.json({"status":"success"})
 	});
 
 app.use('/checklogin', (req, res) => {
-	
-	console.log("checking login");
-	
+
 	//no id 
 	if(!req.query.id) {
-		res.json({"status":"invalid parameters"});
+		res.json({"status":"error"});
 	}
-
-	console.log(req.query.id);
 
 	//find the user in db
 	var queryObject = {"google_uid" : req.query.id};
@@ -181,17 +173,15 @@ app.use('/checklogin', (req, res) => {
 			res.json({"status":"error"});
 		} else {
 			if(!user) {
-				console.log("Adding new user");
 				// Add user to database 
 				var newUser = new User({
 					google_uid: req.query.id,
 					saved_recipes: {}
 					});
 				newUser.save((err)=>{if(err){console.log(err)}});
-				res.json({"status":"user created"});
+				res.json({"status":"success", "action":"user created"});
 			} else {
-				console.log("User already exists");
-				res.json({"status":"user exists"});
+				res.json({"status":"success", "action":});
 			}
 		}
 	})	

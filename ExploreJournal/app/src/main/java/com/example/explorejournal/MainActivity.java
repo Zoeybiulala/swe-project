@@ -2,16 +2,15 @@ package com.example.explorejournal;
 
 import static com.example.explorejournal.RealmApp.app;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -20,14 +19,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-
-import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -65,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                             handleSignInResult(task);
                         });
 
-        findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener)(it -> MainActivity.this.signIn()));
+        findViewById(R.id.sign_in_button).setOnClickListener((it -> MainActivity.this.signIn()));
 
         // Check if server is running
         if(ping()){

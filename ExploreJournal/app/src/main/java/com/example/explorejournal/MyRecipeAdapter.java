@@ -36,16 +36,29 @@ public class MyRecipeAdapter extends RecyclerView.Adapter<MyRecipeAdapter.ViewHo
     // This function executes when the holder is assigned to position 'position'
     // so we do any modifications necessary to give it the data for that spot
     public void onBindViewHolder(@NonNull MyRecipeAdapter.ViewHolder holder, int position) {
-        holder.recipeNameView.setText(data.get(position).getName());
+        if(data.size() == 0){
+            holder.recipeNameView.setText(R.string.empty_myrecipes);
+        } else {
+            holder.recipeNameView.setText(data.get(position).getName());
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        if(data.size() == 0){
+            return 1;
+        } else {
+            return data.size();
+        }
     }
 
     public Recipe getItem(int position) {
-        return data.get(position);
+        if(data.size() == 0){
+            return null;
+        } else {
+            return data.get(position);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

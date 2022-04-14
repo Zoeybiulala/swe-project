@@ -6,26 +6,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class GlobalRecipeViewActivity extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
@@ -74,69 +64,36 @@ public class GlobalRecipeViewActivity extends AppCompatActivity implements Globa
     // and store in the allRecipes field
     public void getAllRecipes(){
 
+        JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("api");
         try {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute( () -> {
-                        try {
-
-                            URL url = new URL("http://10.0.2.2:3000/api");
-
-                            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                            conn.setRequestMethod("GET");
-                            conn.connect();
-
-                            // Handle response
-                            int responsecode = conn.getResponseCode();
-                            if(responsecode != 200){
-                                throw new IllegalStateException();
-                            }
-
-                            List<Recipe> allRecipes = new ArrayList<>();
-
-                            Scanner in = new Scanner(url.openStream());
-                            while(in.hasNext()){
-                                String line = in.nextLine();
-                                JSONArray data = new JSONArray(line);
-                                for(int i=0; i<data.length(); i++){
-                                    JSONObject jsonRecipe = data.getJSONObject(i);
-                                    String id = jsonRecipe.getString("_id");
-                                    String recipeUrl = jsonRecipe.getString("url");
-                                    String description = jsonRecipe.getString("description");
-                                    String name = jsonRecipe.getString("name");
-                                    JSONArray jsonTags = jsonRecipe.getJSONArray("tags");
-                                    JSONArray jsonUsers = jsonRecipe.getJSONArray("list_of_users");
-                                    // Parse json array of tags into list of strings
-                                    List<String> tags = new ArrayList<>();
-                                    List<String> users = new ArrayList<>();
-                                    for(int j=0; j<jsonTags.length(); j++){
-                                        tags.add(jsonTags.getString(j));
-                                    }
-                                    // Parse json array of user ids into list of strings
-                                    for(int j=0; j<jsonUsers.length(); j++){
-                                        users.add(jsonUsers.getString(j));
-                                    }
-                                    allRecipes.add(new Recipe(id, recipeUrl, description, name, tags, users));
-                                }
-                            }
-
-                            allRecipesList = allRecipes;
-
-                        }
-                        catch (Exception e) {
-                            Log.v("Express", e.toString());
-                        }
+            if(result != null && result.getString("status").equals("success")){
+                JSONArray data = result.getJSONArray("data");
+                List<Recipe> allRecipes = new ArrayList<>();
+                for(int i=0; i<data.length(); i++){
+                    JSONObject jsonRecipe = data.getJSONObject(i);
+                    String id = jsonRecipe.getString("_id");
+                    String recipeUrl = jsonRecipe.getString("url");
+                    String description = jsonRecipe.getString("description");
+                    String name = jsonRecipe.getString("name");
+                    JSONArray jsonTags = jsonRecipe.getJSONArray("tags");
+                    JSONArray jsonUsers = jsonRecipe.getJSONArray("list_of_users");
+                    // Parse json array of tags into list of strings
+                    List<String> tags = new ArrayList<>();
+                    List<String> users = new ArrayList<>();
+                    for(int j=0; j<jsonTags.length(); j++){
+                        tags.add(jsonTags.getString(j));
                     }
-            );
-
-            executor.shutdown();
-            boolean timeout = executor.awaitTermination(2, TimeUnit.SECONDS);
-            if(timeout){
-                Log.v("Timeout", "timeout in GlobalRecipeView");
+                    // Parse json array of user ids into list of strings
+                    for(int j=0; j<jsonUsers.length(); j++){
+                        users.add(jsonUsers.getString(j));
+                    }
+                    allRecipes.add(new Recipe(id, recipeUrl, description, name, tags, users));
+                }
+                allRecipesList = allRecipes;
             }
-        }
-        catch (Exception e) {
-            // uh oh
+        } catch (JSONException e) {
             e.printStackTrace();
+            throw new IllegalStateException();
         }
     }
 
@@ -149,13 +106,8 @@ public class GlobalRecipeViewActivity extends AppCompatActivity implements Globa
     }
 
     public void onNavButtonClick(View view) {
-        Log.v("navbutton", view.getId() + " " + R.id.nav_button_my_recipes);
-        if(view.getId() == R.id.nav_button_global_recipes){
-            return;
-        } else if(view.getId() == R.id.nav_button_my_recipes) {
+        if(view.getId() == R.id.nav_button_my_recipes) {
             finish();
         }
     }
-
-
 }
