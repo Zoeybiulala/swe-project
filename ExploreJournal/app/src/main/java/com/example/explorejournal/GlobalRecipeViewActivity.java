@@ -9,6 +9,9 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -109,5 +112,13 @@ public class GlobalRecipeViewActivity extends AppCompatActivity implements Globa
         if(view.getId() == R.id.nav_button_my_recipes) {
             finish();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main,menu);
+
+        return true;
     }
 }
