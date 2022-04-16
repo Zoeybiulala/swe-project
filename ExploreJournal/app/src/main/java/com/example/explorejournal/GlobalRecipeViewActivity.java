@@ -6,6 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -114,10 +117,23 @@ public class GlobalRecipeViewActivity extends AppCompatActivity implements Globa
         }
     }
 
+    /***
+     * for search functionality *
+                                ***/
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main,menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+
 
         return true;
     }
