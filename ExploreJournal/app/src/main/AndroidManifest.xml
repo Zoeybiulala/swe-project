@@ -15,6 +15,9 @@
             android:name=".GlobalRecipeViewActivity"
             android:exported="false" />
         <activity
+            android:name=".RecipeAttemptActivity"
+            android:exported="false" />
+        <activity
             android:name=".MyRecipeViewActivity"
             android:exported="false" />
         <activity

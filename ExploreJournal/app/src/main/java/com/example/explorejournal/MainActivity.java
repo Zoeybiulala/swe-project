@@ -90,15 +90,16 @@ public class MainActivity extends AppCompatActivity {
 
                         User user = app.currentUser();
                         assert user != null;
-                        System.out.println(user.getId());
-                        System.out.println("profile" + user.getProfile().getName());
                         loggedInUser = user.getId();
 
                         checkLogin(loggedInUser);
 
                         Intent loggedInIntent = new Intent(this, MyRecipeViewActivity.class);
-                        loggedInIntent.putExtra("google_uid", loggedInUser);
-                        loggedInIntent.putExtra("name", user.getProfile().getName());
+
+                        loggedInIntent.putExtra("google_uid", "example");
+                        loggedInIntent.putExtra("name", "example user");
+//                        loggedInIntent.putExtra("google_uid", loggedInUser);
+//                        loggedInIntent.putExtra("name", user.getProfile().getName());
                         startActivity(loggedInIntent);
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
@@ -130,15 +131,12 @@ public class MainActivity extends AppCompatActivity {
                     conn.setRequestMethod("GET");
                     conn.connect();
 
-                    Log.v("checklogin", "here");
-
                     // Handle response
                     int responseCode = conn.getResponseCode();
                     if(responseCode != 200){
                         throw new IllegalStateException();
                     }
 
-                    Log.v("checklogin", "here2");
 
                     Scanner in = new Scanner(conn.getInputStream());
                     Log.v("checklogin", in.hasNext() + " ");
