@@ -110,4 +110,8 @@ public class GlobalRecipeViewActivity extends AppCompatActivity implements Globa
             finish();
         }
     }
+
+    // add log out button ?
+
+    // TODO for each recipe, if we tap on it, we can add it to our database
 }

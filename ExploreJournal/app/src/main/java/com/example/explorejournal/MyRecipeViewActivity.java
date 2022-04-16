@@ -108,4 +108,6 @@ public class MyRecipeViewActivity extends AppCompatActivity implements MyRecipeA
         }
     }
 
+    // TODO when I click on a recipe, I can see the recipe's info and a list of attempts!
+
 }
