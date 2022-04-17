@@ -24,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GlobalRecipeViewActivity extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
+public class GlobalRecipeViewActivity extends BaseActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
     List<Recipe> allRecipesList;
