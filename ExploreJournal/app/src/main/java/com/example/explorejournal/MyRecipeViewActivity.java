@@ -65,6 +65,7 @@ public class MyRecipeViewActivity extends BaseActivity implements MyRecipeAdapte
         recipeAttempt.putExtra("name", adapter.getItem(position).name);
         recipeAttempt.putExtra("url", adapter.getItem(position).url);
         recipeAttempt.putExtra("description", adapter.getItem(position).description);
+        recipeAttempt.putExtra("recipe_id", adapter.getItem(position).id);
 
         // attempts
         recipeAttempt.putExtra("google_uid", getIntent().getStringExtra("google_uid"));

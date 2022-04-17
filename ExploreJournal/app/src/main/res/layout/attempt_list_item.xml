@@ -15,17 +15,15 @@
             android:layout_height="50dp"
             android:id="@+id/attempt_date"
             android:textSize="12dp"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:text="Date"/>
+            android:gravity="left"
+            android:layout_weight="1" />
 
         <TextView
             android:id="@+id/attempt_rating"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="Rating"
+            android:gravity="left"
             android:textSize="12dp" />
 
         <TextView
@@ -33,9 +31,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/attempt_note"
             android:textSize="12dp"
-            android:gravity="center"
-            android:layout_weight="3"
-            android:text="Note"/>
+            android:gravity="left"
+            android:layout_weight="3" />
 
     </LinearLayout>
 
