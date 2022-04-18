@@ -1,12 +1,14 @@
 package com.example.explorejournal;
 
+import androidx.annotation.NonNull;
+
 import java.util.Date;
 import java.util.Objects;
 
 public class Attempt {
-    private String note;
-    private Date date;
-    private double rating;
+    private final String note;
+    private final Date date;
+    private final double rating;
 
     public Attempt(String note, Date date, double rating) {
         this.note = note;
@@ -26,6 +28,7 @@ public class Attempt {
         return rating;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Attempt{" +

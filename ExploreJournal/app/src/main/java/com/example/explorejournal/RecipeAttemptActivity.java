@@ -1,6 +1,7 @@
 package com.example.explorejournal;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -8,13 +9,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class RecipeAttemptActivity extends BaseActivity {
     private ArrayList<Attempt> attemptsArrayList;
     private ListView listView;
+    private String recipe_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +42,8 @@ public class RecipeAttemptActivity extends BaseActivity {
         TextView recipeDescription= findViewById(R.id.recipe_description);
         recipeDescription.setText(description);
 
+        recipe_id = getIntent().getStringExtra("recipe_id");
+
         // display attempts
         listView = findViewById(R.id.attempt_list_view);
 
@@ -45,22 +54,27 @@ public class RecipeAttemptActivity extends BaseActivity {
     }
     private void populateList(){
 
-        JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("users?google_uid=" + "example");
+        JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("userattempts?uid=example&rid=" + recipe_id);
 
 
         try {
             if(result != null && result.getString("status").equals("success")){
                 JSONArray data = result.getJSONArray("data");
-                ArrayList<Attempt> allAttempts = new ArrayList<>();
-//                for(int i=0; i<data.length(); i++){
-////                    JSONObject savedRecipes = data.getJSONObject(i);
-////                    JSONObject attempts= savedRecipes.getString("_id");
-//
-////                    allAttempts.add(new Attempt(note, date, rating));
-//                }
-                attemptsArrayList = allAttempts;
+                Log.v("recipe attempts", data.toString());
+                attemptsArrayList = new ArrayList<>();
+                for(int i=0; i<data.length(); i++){
+                    JSONObject currentAttempt = data.getJSONObject(i);
+                    String note = currentAttempt.getString("note");
+                    String dateString = currentAttempt.getString("date");
+                    SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+                    Date attemptDate = dateFormatter.parse(dateString);
+                    double attemptRating = currentAttempt.getDouble("rating");
+                    attemptsArrayList.add(new Attempt(note, attemptDate, attemptRating));
+                }
+            } else {
+                attemptsArrayList = new ArrayList<>();
             }
-        } catch (JSONException e) {
+        } catch (JSONException | ParseException e) {
             e.printStackTrace();
             throw new IllegalStateException();
         }

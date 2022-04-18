@@ -226,7 +226,41 @@ app.use('/checklogin', (req, res) => {
             }
         }
     })
-})
+});
+
+app.use('/userattempts', (req, res) => {
+
+    //no user id 
+    if (!req.query.uid) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+	// no recipe id 
+	if (!req.query.rid) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    //find the user in db
+    var queryObject = { "google_uid": req.query.uid };
+    User.findOne(queryObject, (err, user) => {
+        if (err) {
+            res.json({ "status": "error" });
+        } else {
+            if (!user) {
+                res.json({ "status": "error" });
+            } else {
+				this_recipe_attempts = user.saved_recipes.get(req.query.rid);
+				if(this_recipe_attempts){
+					res.json({"status":"success", "data":this_recipe_attempts})
+				} else {
+					res.json({"status":"error"});
+				}
+            }
+        }
+    })
+});
 
 app.use('/myrecipes', (req, res) => {
 
