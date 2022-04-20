@@ -35,7 +35,7 @@ public class ServerConnection {
                         throw new IllegalStateException();
                     }
 
-                    Scanner in = new Scanner(url.openStream());
+                    Scanner in = new Scanner(conn.getInputStream());
                     if(!in.hasNext()) {
                         result = null;
                     } else {
