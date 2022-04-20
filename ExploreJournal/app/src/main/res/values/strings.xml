@@ -14,4 +14,6 @@
     <string name="back_to_my_recipes">Back to my recipes</string>
     <string name="submit">Submit</string>
     <string name="back_to_attempts">Back to attempts</string>
+    <string name="write_your_description_of_this_attempt_here">Write your description of this attempt here</string>
+    <string name="recipe_rating_bar">Recipe rating bar</string>
 </resources>

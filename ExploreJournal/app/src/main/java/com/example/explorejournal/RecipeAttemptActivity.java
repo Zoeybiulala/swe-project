@@ -85,6 +85,7 @@ public class RecipeAttemptActivity extends BaseActivity {
 
         logNewAttempt.putExtra("recipe_id", recipe_id);
         logNewAttempt.putExtra("google_uid", getIntent().getStringExtra("google_uid"));
+        logNewAttempt.putExtra("recipe_name", getIntent().getStringExtra("name"));
         startActivity(logNewAttempt);
     }
 
