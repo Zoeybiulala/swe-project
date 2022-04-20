@@ -13,7 +13,20 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".GlobalRecipeViewActivity"
-            android:exported="false" />
+            android:exported="false">
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+<!--        <activity-->
+<!--            android:name=".SearchResultsActivity"-->
+<!--            android:exported="false">-->
+<!--            <intent-filter>-->
+<!--                    <action android:name="android.intent.action.SEARCH" />-->
+<!--            </intent-filter>-->
+<!--            <meta-data android:name="android.app.searchable"-->
+<!--                       android:resource="@xml/searchable" />-->
+<!--        </activity>-->
+
         <activity
             android:name=".RecipeAttemptActivity"
             android:exported="false" />
