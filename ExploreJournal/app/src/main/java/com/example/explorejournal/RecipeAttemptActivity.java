@@ -1,7 +1,9 @@
 package com.example.explorejournal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -11,16 +13,12 @@ import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class RecipeAttemptActivity extends BaseActivity {
     private ArrayList<Attempt> attemptsArrayList;
-    private ListView listView;
     private String recipe_id;
 
     @Override
@@ -45,7 +43,7 @@ public class RecipeAttemptActivity extends BaseActivity {
         recipe_id = getIntent().getStringExtra("recipe_id");
 
         // display attempts
-        listView = findViewById(R.id.attempt_list_view);
+        ListView listView = findViewById(R.id.attempt_list_view);
 
         populateList();
 
@@ -78,6 +76,21 @@ public class RecipeAttemptActivity extends BaseActivity {
             e.printStackTrace();
             throw new IllegalStateException();
         }
+    }
+
+    public void onNewAttemptButtonClick(View view){
+        Log.v("attempts","new attempt button pressed");
+        // take recipe id and login info, launch new activity
+        Intent logNewAttempt= new Intent(this, LogNewAttemptActivity.class);
+
+        logNewAttempt.putExtra("recipe_id", recipe_id);
+        logNewAttempt.putExtra("google_uid", getIntent().getStringExtra("google_uid"));
+        startActivity(logNewAttempt);
+    }
+
+    public void onBackButtonClick(View view){
+        Log.v("attempts","back button pressed");
+        finish();
     }
     
 }

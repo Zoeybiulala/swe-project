@@ -24,7 +24,8 @@ public class BaseActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.miLogout) {
             Log.i("AUTH", "Logout");
             User user = app.currentUser();
-            user.logOutAsync( result -> {
+            assert user != null;
+            user.logOutAsync(result -> {
                 if (result.isSuccess()) {
                     Log.v("AUTH", "Successfully logged out.");
                 } else {

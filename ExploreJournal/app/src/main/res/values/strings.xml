@@ -10,4 +10,8 @@
     <string name="all_recipes">All Recipes</string>
     <string name="my_recipes">My Saved Recipes</string>
     <string name="empty_myrecipes">You haven\'t saved any recipes.</string>
+    <string name="log_new_attempt">Log new attempt</string>
+    <string name="back_to_my_recipes">Back to my recipes</string>
+    <string name="submit">Submit</string>
+    <string name="back_to_attempts">Back to attempts</string>
 </resources>
