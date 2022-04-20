@@ -11,9 +11,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to database and model relevant classes
 const mongoose = require('mongoose');
+const {userSchema} = require('./User.js');
+const {attemptSchema} = require('./User.js');
+const { off } = require('./Recipe.js');
 const conn = mongoose.createConnection('mongodb+srv://thdang:PfNuJS36uRbLXFB@cluster0.xiudz.mongodb.net/exploreJournalDb?retryWrites=true');
 var Recipe = conn.model('Recipe', require('./Recipe.js'));
-var User = conn.model('User', require('./User.js'));
+var User = conn.model('User', userSchema)
+var Attempt = conn.model('Attempt', attemptSchema);
 
 var count = 0;
 /*************************************************/
@@ -299,6 +303,52 @@ app.use('/myrecipes', (req, res) => {
         }
     })
 })
+
+app.use('/newattempt', (req, res) => {
+
+    // missing parameters 
+    if (!req.query.uid || !req.query.rid || !req.query.note || !req.query.rating) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    if(isNaN(req.query.rating)){
+        res.json({ "status": "error" });
+        return;
+    }
+
+    //find the user in db
+    var queryObject = { "google_uid": req.query.uid };
+    User.findOne(queryObject, (err, user) => {
+        if (err) {
+            res.json({ "status": "error" });
+        } else {
+            if (!user) {
+                res.json({ "status": "error" });
+            } else {
+				this_recipe_attempts = user.saved_recipes.get(req.query.rid);
+				if(this_recipe_attempts){
+					// Add new attempt 
+                    var newAttempt = new Attempt({
+                        date: new Date(),
+                        rating: req.query.rating,
+                        note: req.query.note
+                        });
+                    this_recipe_attempts.push(newAttempt);
+                    console.log(user);
+                    User.replaceOne({ _id: user._id}, user, (err,docs)=>{
+                        if(err){
+                            console.log(err);
+                        }
+                    });
+                    res.json({"status":"success"});
+				} else {
+					res.json({"status":"error"});
+				}
+            }
+        }
+    })
+});
 
 /*************************************************/
 // Endpoints used for testing 
