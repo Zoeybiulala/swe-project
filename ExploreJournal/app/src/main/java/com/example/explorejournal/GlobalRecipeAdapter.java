@@ -4,25 +4,30 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // Used to render recipes in the global list
-public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapter.ViewHolder>{
+public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapter.ViewHolder> implements Filterable {
 
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
     private final LayoutInflater inflater;
     private final List<Recipe> data;
+    private List<Recipe> myList;
     private ItemClickListener clickListener;
 
     public GlobalRecipeAdapter(Context context, List<Recipe> data){
         this.inflater = LayoutInflater.from(context);
-        this.data = data;
+        this.myList = data;
+        this.data = new ArrayList<>(data); //full list
     }
 
     @NonNull
@@ -36,7 +41,7 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
     // This function executes when the holder is assigned to position 'position'
     // so we do any modifications necessary to give it the data for that spot
     public void onBindViewHolder(@NonNull GlobalRecipeAdapter.ViewHolder holder, int position) {
-        holder.recipeNameView.setText(data.get(position).getName());
+        holder.recipeNameView.setText(myList.get(position).getName());
     }
 
     @Override
@@ -49,7 +54,7 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
     }
 
     public Recipe getItem(int position) {
-        return data.get(position);
+        return myList.get(position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -67,7 +72,7 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
             if (clickListener != null) clickListener.onItemClick(view, getAdapterPosition());
         }
     }
-
+//
     void setClickListener(ItemClickListener itemClickListener) {
         this.clickListener = itemClickListener;
     }
@@ -76,4 +81,38 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
     public interface ItemClickListener {
         void onItemClick(View view, int position);
     }
+
+
+    @Override
+    public Filter getFilter() {
+        return myFilter;
+    }
+
+    private Filter myFilter = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            List<Recipe> filteredList = new ArrayList<>();
+            if(constraint == null || constraint.length() == 0) {
+                filteredList.addAll(data);
+            } else {
+                String filterPattern = constraint.toString().toLowerCase().trim();
+                for(Recipe r: data) {
+                    if (r.getName().toLowerCase().contains(filterPattern)) {
+                        filteredList.add(r);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filteredList;
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            myList.clear();
+            myList.addAll((List) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+
 }

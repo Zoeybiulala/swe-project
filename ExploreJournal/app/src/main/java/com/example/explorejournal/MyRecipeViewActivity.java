@@ -19,7 +19,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyRecipeViewActivity extends AppCompatActivity implements MyRecipeAdapter.ItemClickListener{
+public class MyRecipeViewActivity extends BaseActivity implements MyRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
     List<Recipe> myRecipesList;
@@ -58,7 +58,20 @@ public class MyRecipeViewActivity extends AppCompatActivity implements MyRecipeA
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+
+        // take recipe id, launch new intent with my recipe attempts
+        Intent recipeAttempt= new Intent(this, RecipeAttemptActivity.class);
+
+        recipeAttempt.putExtra("name", adapter.getItem(position).name);
+        recipeAttempt.putExtra("url", adapter.getItem(position).url);
+        recipeAttempt.putExtra("description", adapter.getItem(position).description);
+        recipeAttempt.putExtra("recipe_id", adapter.getItem(position).id);
+
+        // attempts
+        recipeAttempt.putExtra("google_uid", getIntent().getStringExtra("google_uid"));
+        startActivity(recipeAttempt);
+
+        //Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
     // Fetch JSON array of recipes from server, convert it into a list of Recipe objects,

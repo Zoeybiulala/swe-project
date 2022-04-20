@@ -9,7 +9,13 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import java.util.ArrayList;
 import java.util.List;
+
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.SearchView;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,7 +24,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class GlobalRecipeViewActivity extends AppCompatActivity implements GlobalRecipeAdapter.ItemClickListener{
+public class GlobalRecipeViewActivity extends BaseActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
 
     List<Recipe> allRecipesList;
@@ -111,7 +117,34 @@ public class GlobalRecipeViewActivity extends AppCompatActivity implements Globa
         }
     }
 
-    // add log out button ?
+    /***
+     * for search functionality *
+                                ***/
 
-    // TODO for each recipe, if we tap on it, we can add it to our database
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main,menu);
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                adapter.getFilter().filter(newText);
+                return false;
+            }
+        });
+
+        return true;
+    }
+
 }

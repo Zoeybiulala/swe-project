@@ -226,7 +226,41 @@ app.use('/checklogin', (req, res) => {
             }
         }
     })
-})
+});
+
+app.use('/userattempts', (req, res) => {
+
+    //no user id 
+    if (!req.query.uid) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+	// no recipe id 
+	if (!req.query.rid) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    //find the user in db
+    var queryObject = { "google_uid": req.query.uid };
+    User.findOne(queryObject, (err, user) => {
+        if (err) {
+            res.json({ "status": "error" });
+        } else {
+            if (!user) {
+                res.json({ "status": "error" });
+            } else {
+				this_recipe_attempts = user.saved_recipes.get(req.query.rid);
+				if(this_recipe_attempts){
+					res.json({"status":"success", "data":this_recipe_attempts})
+				} else {
+					res.json({"status":"error"});
+				}
+            }
+        }
+    })
+});
 
 app.use('/myrecipes', (req, res) => {
 
@@ -282,18 +316,6 @@ app.use('/clearDatabase', (req, res) => {
 app.use('/addExamples', (req, res) => {
     count++;
 
-    // var exampleRecipe = new Recipe ({
-    // 	recipe_id: count,
-    // 	url: "https://www.allrecipes.com/recipe/236609/honey-garlic-slow-cooker-chicken-thighs/",
-    // 	description: "I have used it often. It's easy and uses \
-    // 	pantry staples. Always a hit with adults and kids. Serve\
-    // 	 with basmati rice or quinoa and steamed or roasted \
-    // 	 vegetables.",
-    // 	name: "Honey-Garlic Slow Cooker Chicken Thighs",
-    // 	tags: ["chicken", "honey", "slow-cooking"],
-    // 	list_of_users : []
-    // });
-
     var exampleRecipe = new Recipe({
         recipe_id: count,
         url: "google.com",
@@ -319,19 +341,11 @@ app.use('/addExamples', (req, res) => {
         google_uid: "example",
         saved_recipes: {}
     });
-
     exampleUser.saved_recipes.set(exampleRecipe.id, [{
-            date: '2022-03-29',
-            rating: 10000,
-            note: "I love chicken ala google"
-        },
-        {
-            date: '2022-03-30',
-            rating: 20000,
-            note: "I love chicken ala google even more"
-        }
-    ]);
-
+        date: '2022-03-29',
+        rating: 10000,
+        note: "I love chicken ala google"
+    }]);
     exampleUser.save((err) => { if (err) { console.log(err) } });
 
     res.end();
