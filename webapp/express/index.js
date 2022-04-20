@@ -317,6 +317,8 @@ app.use('/newattempt', (req, res) => {
         return;
     }
 
+    console.log(req.query.uid + " " + req.query.rid + " " + req.query.note + " " + req.query.rating);
+
     //find the user in db
     var queryObject = { "google_uid": req.query.uid };
     User.findOne(queryObject, (err, user) => {
@@ -335,7 +337,6 @@ app.use('/newattempt', (req, res) => {
                         note: req.query.note
                         });
                     this_recipe_attempts.push(newAttempt);
-                    console.log(user);
                     User.replaceOne({ _id: user._id}, user, (err,docs)=>{
                         if(err){
                             console.log(err);

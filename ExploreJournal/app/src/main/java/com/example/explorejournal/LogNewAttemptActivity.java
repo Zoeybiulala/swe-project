@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import org.json.JSONObject;
+
 // Done button on multi-line editText using method from here:
 // https://stackoverflow.com/questions/2986387/multi-line-edittext-with-done-action-button
 
@@ -47,6 +49,11 @@ public class LogNewAttemptActivity extends BaseActivity{
         if(!String.valueOf(descriptionInput.getText()).isEmpty()){
             description = String.valueOf(descriptionInput.getText());
         }
-        Log.v("attempt", description + " " + ratingInput.getRating());
+
+        Log.v("attempt", "newattempt?uid=" + google_uid + "&rid=" + recipe_id + "&note=" + description + "&rating=" + ratingInput.getRating());
+        JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("newattempt?uid=" + google_uid + "&rid=" + recipe_id + "&note=" + description + "&rating=" + ratingInput.getRating());
+        Log.v("attempt", result.toString());
+
+        finish();
     }
 }
