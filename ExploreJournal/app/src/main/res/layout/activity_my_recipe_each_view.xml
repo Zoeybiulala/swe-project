@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/recipe_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="name"
+        android:textSize="16dp"
+        android:textColor="#4244BA"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/recipe_url"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="url"
+        android:textSize="14dp"
+        app:layout_constraintStart_toStartOf="@+id/recipe_name"
+        app:layout_constraintTop_toBottomOf="@+id/recipe_name" />
+
+    <TextView
+        android:id="@+id/recipe_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="description"
+        android:textSize="12dp"
+        app:layout_constraintStart_toStartOf="@+id/recipe_url"
+        app:layout_constraintTop_toBottomOf="@+id/recipe_url" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@+id/recipe_description"
+        app:layout_constraintTop_toBottomOf="@+id/recipe_description" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="Date"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Rating"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="Note"
+                    android:textSize="12dp" />
+
+            </LinearLayout>
+
+            <ListView
+                android:id="@+id/attempt_list_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp">
+
+            </ListView>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

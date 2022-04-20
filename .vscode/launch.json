@@ -6,7 +6,7 @@
     "configurations": [
     {
         "name": "Launch Program",
-        "program": "${workspaceFolder}/webapp/index.js",
+        "program": "${workspaceFolder}/webapp/express/index.js",
         "request": "launch",
         "skipFiles": [
             "<node_internals>/**"

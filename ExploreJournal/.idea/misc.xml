@@ -7,9 +7,12 @@
         <entry key="app/src/main/res/layout/activity_express_example.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_global_recipe_view.xml" value="0.21895294189453135" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.15384615384615385" />
+        <entry key="app/src/main/res/layout/activity_my_recipe_each_view.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_my_recipe_view.xml" value="0.1625" />
         <entry key="app/src/main/res/layout/activity_sample_result.xml" value="0.13958333333333334" />
         <entry key="app/src/main/res/layout/activity_scroll_list.xml" value="0.18931159420289856" />
+        <entry key="app/src/main/res/layout/attempt_list_item.xml" value="0.14837341308593752" />
+        <entry key="app/src/main/res/layout/attempt_list_view.xml" value="0.1" />
         <entry key="app/src/main/res/layout/bottom_nav_buttons.xml" value="0.1625" />
         <entry key="app/src/main/res/layout/example_scroll_row.xml" value="0.1" />
         <entry key="app/src/main/res/layout/global_recipe_row.xml" value="0.18931159420289856" />
@@ -17,6 +20,7 @@
         <entry key="app/src/main/res/layout/global_recipe_view.xml" value="0.16197916666666667" />
         <entry key="app/src/main/res/layout/my_recipe_view.xml" value="0.1625" />
         <entry key="app/src/main/res/layout/searchable.xml" value="0.28229166666666666" />
+        <entry key="app/src/main/res/layout/my_recipe_attempts.xml" value="0.23958333333333334" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.25" />
       </map>
     </option>

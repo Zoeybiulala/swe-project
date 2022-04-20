@@ -46,7 +46,11 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
 
     @Override
     public int getItemCount() {
-        return myList.size();
+        if (data == null) {
+            return 0;
+        } else {
+            return data.size();
+        }
     }
 
     public Recipe getItem(int position) {
