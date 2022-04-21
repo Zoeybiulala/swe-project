@@ -112,11 +112,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("AUTH", "Google Auth failed: "
                         + (completedTask.getException() == null? "null exception" : completedTask.getException().toString()));
 
-                // TODO toast
             }
         } catch (ApiException e) {
             Log.w("AUTH", "Failed to log in with Google OAuth: " + e.getMessage());
-            // TODO toast
         }
     }
 

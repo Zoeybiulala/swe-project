@@ -1,11 +1,14 @@
 package com.example.explorejournal;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -109,5 +112,16 @@ public class RecipeAttemptActivity extends BaseActivity {
 
         AttemptAdapter attemptsAdapter = new AttemptAdapter(this,attemptsArrayList);
         listView.setAdapter(attemptsAdapter);
+    }
+
+    public void openDescription(View view) {
+        String url = getIntent().getStringExtra("url");
+
+        if (URLUtil.isValidUrl(url)) {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(browserIntent);
+        } else {
+            Toast.makeText(this, url + " is in valid!", Toast.LENGTH_SHORT).show();
+        }
     }
 }

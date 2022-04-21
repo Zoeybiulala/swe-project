@@ -11,8 +11,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to database and model relevant classes
 const mongoose = require('mongoose');
-const {userSchema} = require('./User.js');
-const {attemptSchema} = require('./User.js');
+const { userSchema } = require('./User.js');
+const { attemptSchema } = require('./User.js');
 const { off } = require('./Recipe.js');
 const conn = mongoose.createConnection('mongodb+srv://thdang:PfNuJS36uRbLXFB@cluster0.xiudz.mongodb.net/exploreJournalDb?retryWrites=true');
 var Recipe = conn.model('Recipe', require('./Recipe.js'));
@@ -240,8 +240,8 @@ app.use('/userattempts', (req, res) => {
         return;
     }
 
-	// no recipe id 
-	if (!req.query.rid) {
+    // no recipe id 
+    if (!req.query.rid) {
         res.json({ "status": "error" });
         return;
     }
@@ -255,12 +255,12 @@ app.use('/userattempts', (req, res) => {
             if (!user) {
                 res.json({ "status": "error" });
             } else {
-				this_recipe_attempts = user.saved_recipes.get(req.query.rid);
-				if(this_recipe_attempts){
-					res.json({"status":"success", "data":this_recipe_attempts})
-				} else {
-					res.json({"status":"error"});
-				}
+                this_recipe_attempts = user.saved_recipes.get(req.query.rid);
+                if (this_recipe_attempts) {
+                    res.json({ "status": "success", "data": this_recipe_attempts })
+                } else {
+                    res.json({ "status": "error" });
+                }
             }
         }
     })
@@ -312,7 +312,7 @@ app.use('/newattempt', (req, res) => {
         return;
     }
 
-    if(isNaN(req.query.rating)){
+    if (isNaN(req.query.rating)) {
         res.json({ "status": "error" });
         return;
     }
@@ -328,24 +328,24 @@ app.use('/newattempt', (req, res) => {
             if (!user) {
                 res.json({ "status": "error" });
             } else {
-				this_recipe_attempts = user.saved_recipes.get(req.query.rid);
-				if(this_recipe_attempts){
-					// Add new attempt 
+                this_recipe_attempts = user.saved_recipes.get(req.query.rid);
+                if (this_recipe_attempts) {
+                    // Add new attempt 
                     var newAttempt = new Attempt({
                         date: new Date(),
                         rating: req.query.rating,
                         note: req.query.note
-                        });
+                    });
                     this_recipe_attempts.push(newAttempt);
-                    User.replaceOne({ _id: user._id}, user, (err,docs)=>{
-                        if(err){
+                    User.replaceOne({ _id: user._id }, user, (err, docs) => {
+                        if (err) {
                             console.log(err);
                         }
                     });
-                    res.json({"status":"success"});
-				} else {
-					res.json({"status":"error"});
-				}
+                    res.json({ "status": "success" });
+                } else {
+                    res.json({ "status": "error" });
+                }
             }
         }
     })
@@ -369,7 +369,7 @@ app.use('/addExamples', (req, res) => {
 
     var exampleRecipe = new Recipe({
         recipe_id: count,
-        url: "google.com",
+        url: "https://www.averiecooks.com/garlic-butter-chicken/",
         description: "delicious",
         name: "chicken ala google",
         tags: [],

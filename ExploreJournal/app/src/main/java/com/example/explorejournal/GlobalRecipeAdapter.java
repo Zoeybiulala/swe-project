@@ -1,6 +1,7 @@
 package com.example.explorejournal;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,14 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
             super(itemView);
             recipeNameView = itemView.findViewById(R.id.RecipeName);
             itemView.setOnClickListener(this);
+
+            itemView.findViewById(R.id.SaveRecipe).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.v("SAVE RECIPE", "Save Recipe " + getAdapterPosition() + "!" );
+
+                }
+            });
         }
 
         @Override

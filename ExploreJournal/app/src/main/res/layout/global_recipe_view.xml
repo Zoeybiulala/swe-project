@@ -5,12 +5,19 @@
     android:padding="10dp">
 
     <TextView
-        android:textSize="16dp"
         android:id="@+id/RecipeName"
-        android:layout_width="match_parent"
+        android:layout_width="284dp"
         android:layout_height="wrap_content"
-        android:text="@string/example_text">
+        android:text="@string/example_text"
+        android:textSize="16dp">
 
     </TextView>
+
+    <Button
+        android:id="@+id/SaveRecipe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Save" />
 
 </LinearLayout>
