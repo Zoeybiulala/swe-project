@@ -1,5 +1,6 @@
 package com.example.explorejournal;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +12,8 @@ import java.util.ArrayList;
 
 public class AttemptAdapter  extends BaseAdapter {
 
-    private Context context;
-    private ArrayList<Attempt> attempts;
+    private final Context context;
+    private final ArrayList<Attempt> attempts;
 
     public AttemptAdapter(Context context, ArrayList<Attempt> attempts) {
         this.context = context;
@@ -47,6 +48,7 @@ public class AttemptAdapter  extends BaseAdapter {
         }
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
 
@@ -58,9 +60,9 @@ public class AttemptAdapter  extends BaseAdapter {
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.attempt_list_item, null, true);
 
-            holder.attemptDate = (TextView) view.findViewById(R.id.attempt_date);
-            holder.attemptRating = (TextView) view.findViewById(R.id.attempt_rating);
-            holder.attemptNote = (TextView) view.findViewById(R.id.attempt_note);
+            holder.attemptDate = view.findViewById(R.id.attempt_date);
+            holder.attemptRating = view.findViewById(R.id.attempt_rating);
+            holder.attemptNote = view.findViewById(R.id.attempt_note);
 
 
 

@@ -16,4 +16,4 @@ var userSchema = new Schema({
         }
     });
     
-module.exports = userSchema;
+module.exports = {userSchema: userSchema, attemptSchema: attemptSchema};
