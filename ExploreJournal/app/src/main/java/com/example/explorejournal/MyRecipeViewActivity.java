@@ -118,6 +118,14 @@ public class MyRecipeViewActivity extends BaseActivity implements MyRecipeAdapte
         }
     }
 
-    // TODO when I click on a recipe, I can see the recipe's info and a list of attempts!
-
+    public void refreshMyRecipeView(View view) {
+        if (view.getId() == R.id.refreshMyRecipeButton) {
+            getMyRecipes();
+            getMyRecipes();
+            adapter = new MyRecipeAdapter(this, myRecipesList);
+            adapter.setClickListener(this);
+            RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
+            recyclerView.setAdapter(adapter);
+        }
+    }
 }

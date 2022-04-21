@@ -2,6 +2,7 @@ package com.example.explorejournal;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -50,6 +51,8 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
 
+
+
         if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                     ((LinearLayoutManager)(recyclerView.getLayoutManager())).getOrientation());
@@ -62,7 +65,30 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        if (view.getId() != R.id.SaveRecipe) {
+            Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+
+        } else {
+            // recipe
+            Recipe recipe = adapter.getItem(position);
+
+            JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("user_add_recipe?uid=" + loggedInGoogleUID + "&rid=" + recipe.id);
+
+            try {
+
+                if (result != null && result.getString("status").equals("success")) {
+                    Toast.makeText(this, "Recipe \"" + recipe.getName() + "\" has been added to your library", Toast.LENGTH_SHORT).show();
+                } else if (result != null && result.getString("status").equals("already added")) {
+                    Toast.makeText(this, "Recipe \"" + recipe.getName() + "\" is already in your library!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                throw new IllegalStateException();
+            }
+        }
     }
 
     // Fetch JSON array of recipes from server, convert it into a list of Recipe objects,

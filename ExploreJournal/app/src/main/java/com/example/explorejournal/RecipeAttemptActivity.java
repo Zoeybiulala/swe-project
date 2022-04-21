@@ -73,6 +73,11 @@ public class RecipeAttemptActivity extends BaseActivity {
                 attemptsArrayList = new ArrayList<>();
                 for(int i=0; i<data.length(); i++){
                     JSONObject currentAttempt = data.getJSONObject(i);
+
+                    if (!currentAttempt.has("note") || !currentAttempt.has("date") || !currentAttempt.has("rating")) {
+                        continue;
+                    }
+
                     String note = currentAttempt.getString("note");
                     String dateString = currentAttempt.getString("date");
                     SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
@@ -121,7 +126,7 @@ public class RecipeAttemptActivity extends BaseActivity {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(browserIntent);
         } else {
-            Toast.makeText(this, url + " is in valid!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, url + " is invalid!", Toast.LENGTH_SHORT).show();
         }
     }
 }

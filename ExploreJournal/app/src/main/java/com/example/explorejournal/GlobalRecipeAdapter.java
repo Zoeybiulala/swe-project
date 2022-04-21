@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -61,19 +62,15 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView recipeNameView;
+        Button saveRecipeButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             recipeNameView = itemView.findViewById(R.id.RecipeName);
             itemView.setOnClickListener(this);
-
-            itemView.findViewById(R.id.SaveRecipe).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Log.v("SAVE RECIPE", "Save Recipe " + getAdapterPosition() + "!" );
-
-                }
-            });
+            itemView.findViewById(R.id.RecipeName);
+            saveRecipeButton = itemView.findViewById(R.id.SaveRecipe);
+            saveRecipeButton.setOnClickListener(this);
         }
 
         @Override
