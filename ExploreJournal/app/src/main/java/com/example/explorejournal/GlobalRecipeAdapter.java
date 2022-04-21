@@ -21,7 +21,7 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
 
     private final LayoutInflater inflater;
     private final List<Recipe> data;
-    private List<Recipe> myList;
+    private final List<Recipe> myList;
     private ItemClickListener clickListener;
 
     public GlobalRecipeAdapter(Context context, List<Recipe> data){
@@ -88,7 +88,7 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
         return myFilter;
     }
 
-    private Filter myFilter = new Filter() {
+    private final Filter myFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Recipe> filteredList = new ArrayList<>();

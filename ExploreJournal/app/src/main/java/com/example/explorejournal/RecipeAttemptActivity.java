@@ -1,9 +1,13 @@
 package com.example.explorejournal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,9 +20,13 @@ import java.util.Date;
 import java.util.Locale;
 
 public class RecipeAttemptActivity extends BaseActivity {
+
+    public static final int LAUNCH_NEW_ATTEMPT_LOG = 1;
+
     private ArrayList<Attempt> attemptsArrayList;
-    private ListView listView;
     private String recipe_id;
+    private String google_uid;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +48,7 @@ public class RecipeAttemptActivity extends BaseActivity {
         recipeDescription.setText(description);
 
         recipe_id = getIntent().getStringExtra("recipe_id");
+        google_uid = getIntent().getStringExtra("google_uid");
 
         // display attempts
         listView = findViewById(R.id.attempt_list_view);
@@ -51,7 +60,7 @@ public class RecipeAttemptActivity extends BaseActivity {
     }
     private void populateList(){
 
-        JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("userattempts?uid=example&rid=" + recipe_id);
+        JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("userattempts?uid=" + google_uid + "&rid=" + recipe_id);
 
 
         try {
@@ -76,5 +85,29 @@ public class RecipeAttemptActivity extends BaseActivity {
             throw new IllegalStateException();
         }
     }
-    
+
+    public void onNewAttemptButtonClick(View view){
+        Log.v("attempts","new attempt button pressed");
+        // take recipe id and login info, launch new activity
+        Intent logNewAttempt= new Intent(this, LogNewAttemptActivity.class);
+
+        logNewAttempt.putExtra("recipe_id", recipe_id);
+        logNewAttempt.putExtra("google_uid", getIntent().getStringExtra("google_uid"));
+        logNewAttempt.putExtra("recipe_name", getIntent().getStringExtra("name"));
+        startActivityForResult(logNewAttempt, LAUNCH_NEW_ATTEMPT_LOG);
+    }
+
+    public void onBackButtonClick(View view){
+        Log.v("attempts","back button pressed");
+        finish();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        populateList();
+
+        AttemptAdapter attemptsAdapter = new AttemptAdapter(this,attemptsArrayList);
+        listView.setAdapter(attemptsAdapter);
+    }
 }
