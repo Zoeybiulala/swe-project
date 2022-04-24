@@ -59,7 +59,8 @@ app.use('/all', (req, res) => {
                 res.write("</a>");
                 res.write("</p>");
             });
-            res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
+
+            res.write("<br><a class=\"btn btn-dark\" href=\"/public/recipeform.html\">Add a recipe</a>");
 
             res.write("</div>"); // close container
             res.write(bootstraps1);
@@ -109,15 +110,16 @@ app.use('/recipe', (req, res) => {
 
                 // res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
                 // adding tags form
-                res.write('<p>Tags: ' + recipe.tags);
+                res.write('<p>Tags: ' + recipe.tags.join(", "));
                 res.write("<form action=\"/add_tags\" method=\"post\">");
                 res.write("<input name=\"recipe_id\" type=\"hidden\" value=\"" + recipe._id + "\">");
                 res.write("Tags <input name=\"tag\">");
-                res.write("<input type=\"submit\" value=\"Submit!\">");
-
-
-                res.write("<br><a href=\"/delete?id=" + recipe._id + "\">[Delete this recipe]<br></a>");
-                res.write("<a href=\"/all\">[Go back]</a>");
+                res.write("<br>       </br>");
+                res.write("<input class=\"btn btn-primary\" type=\"submit\" value=\"Submit tags!\">");
+                res.write("</form>");
+                res.write("<br><a class=\"btn btn-danger\" href=\"/delete?id=" + recipe._id + "\">Delete this recipe<br></a>");
+                res.write("<p></p>");
+                res.write("<a class=\"btn btn-dark\" href=\"/all\">Go back</a>");
 
                 res.write("</div>"); // close container
                 res.write(bootstraps1);
@@ -153,7 +155,7 @@ app.use('/create_recipe', (req, res) => {
             res.write("<body><div class=\"container\">"); // container, body
 
             res.write('<p>successfully added ' + newRecipe.name + ' to the database</p>');
-            res.write("<a href=\"/all\">[Go back]</a>");
+            res.write("<a class=\"btn btn-primary\" href=\"/all\">Go back</a>");
 
             res.write("</div>"); // close container
             res.write(bootstraps1);
@@ -226,35 +228,35 @@ app.use('/delete', (req, res) => {
     //find the recipe in the db
     var queryObject = { "_id": req.query.id };
     Recipe.findOne(queryObject, (err, recipe) => {
-        if(err) {
+        if (err) {
             res.type('html').status(200);
             console.log('uh oh' + err);
             res.write(err);
             res.end();
         } else {
-            if(!recipe.list_of_users) {
+            if (!recipe.list_of_users) {
                 console.log("no user have added this recipe");
             } else {
                 recipe.list_of_users.forEach((uid) => {
-                    User.findOne({"google_uid" : uid}, (err, user) => {
-                        if(err) console.log(err);
+                    User.findOne({ "google_uid": uid }, (err, user) => {
+                        if (err) console.log(err);
                         else {
                             user = user.saved_recipes.delete(recipe._id);
-                            User.findOneAndUpdate({"google_uid": uid}, user, (err, user) => {
-                                if(err) console.log(err);
+                            User.findOneAndUpdate({ "google_uid": uid }, user, (err, user) => {
+                                if (err) console.log(err);
                             })
                         }
                     });
                 });
 
                 Recipe.findOneAndDelete(queryObject, (err, recipe) => {
-                    if(err) console.log(err);
+                    if (err) console.log(err);
                 });
                 res.redirect('/all');
             }
         }
     });
-    
+
 });
 
 /*************************************************/
