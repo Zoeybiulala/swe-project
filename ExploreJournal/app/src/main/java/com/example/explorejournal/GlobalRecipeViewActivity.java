@@ -50,7 +50,7 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
         loggedInName = getIntent().getStringExtra("name");
         loggedInGoogleUID = getIntent().getStringExtra("google_uid");
         TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
-        welcomeMessage.setText("Hello, " + loggedInName + "!\n(" + loggedInGoogleUID + ")");
+        welcomeMessage.setText("Hello, " + loggedInName + "!");
 
         recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -75,7 +75,8 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
     @Override
     public void onItemClick(View view, int position) {
         if (view.getId() != R.id.SaveRecipe) {
-            Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+            Recipe r = adapter.getItem(position);
+            Toast.makeText(this, r.getName() + "\nTags: " + r.getTags(), Toast.LENGTH_SHORT).show();
 
         } else {
             // recipe
