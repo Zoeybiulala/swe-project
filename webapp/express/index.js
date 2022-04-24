@@ -20,6 +20,12 @@ var User = conn.model('User', userSchema)
 var Attempt = conn.model('Attempt', attemptSchema);
 
 var count = 0;
+
+/**************** Looks Pretty *************** */
+const stylesheet = "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">"
+const bootstraps1 = "<script src=\"https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js\" integrity=\"sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1\" crossorigin=\"anonymous\"></script>";
+const bootstraps2 = " <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js\" integrity=\"sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM\" crossorigin=\"anonymous\"></script>";
+
 /*************************************************/
 // Endpoints that return HTML 
 /*************************************************/
@@ -38,6 +44,11 @@ app.use('/all', (req, res) => {
 
             // Create title 
             res.type('html');
+
+            res.type('html').status(200);
+            res.write("<head>" + stylesheet + "</head>");
+            res.write("<body><div class=\"container\">"); // container, body
+
             res.write("<h1>Recipes</h1>");
 
             // show all the recipes
@@ -49,6 +60,13 @@ app.use('/all', (req, res) => {
                 res.write("</p>");
             });
             res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
+
+            res.write("</div>"); // close container
+            res.write(bootstraps1);
+            res.write(bootstraps2);
+
+            res.write("</body>"); // close body
+
             res.end();
         }
     }).sort({ 'name': 'asc' }); // this sorts them BEFORE rendering the results
@@ -79,6 +97,9 @@ app.use('/recipe', (req, res) => {
                 return;
             } else {
                 res.type('html').status(200);
+                res.write("<head>" + stylesheet + "</head>");
+                res.write("<body><div class=\"container\">"); // container, body
+
                 res.write('<h1>' + recipe.name + '</h1>');
                 res.write('<p>ID:' + recipe._id + '</p>');
                 res.write('<p>URL: <a href=<a href=\"' + recipe.url + '\">' +
@@ -98,6 +119,13 @@ app.use('/recipe', (req, res) => {
 
                 res.write("<a href=\"/delete?recipe_id=" + recipe.recipe_id + "\">[Delete this recipe]<br></a>");
                 res.write("<a href=\"/all\">[Go back]</a>");
+
+                res.write("</div>"); // close container
+                res.write(bootstraps1);
+                res.write(bootstraps2);
+
+                res.write("</body>"); // close body
+
                 res.end();
             }
         }
@@ -122,8 +150,18 @@ app.use('/create_recipe', (req, res) => {
             res.end();
         } else {
             res.type('html').status(200);
+            res.write("<head>" + stylesheet + "</head>");
+            res.write("<body><div class=\"container\">"); // container, body
+
             res.write('<p>successfully added ' + newRecipe.name + ' to the database</p>');
             res.write("<a href=\"/all\">[Go back]</a>");
+
+            res.write("</div>"); // close container
+            res.write(bootstraps1);
+            res.write(bootstraps2);
+
+            res.write("</body>"); // close body
+
             res.end();
             console.log(count);
         }
@@ -156,9 +194,21 @@ app.use('/add_tags', (req, res) => {
             if (!tagsString) {
                 res.json({ 'status': 'no tag input!' });
             } else {
+
+                res.type('html').status(200);
+                res.write("<head>" + stylesheet + "</head>");
+                res.write("<body><div class=\"container\">"); // container, body
+
                 res.write("<h1>Recipe</h1>");
                 res.write("<a href=\"/recipe?id=" + recipe_id + "\">");
                 res.write("Finish adding tags! Go back to recipe!");
+
+                res.write("</div>"); // close container
+                res.write(bootstraps1);
+                res.write(bootstraps2);
+
+                res.write("</body>"); // close body
+
                 res.end();
             }
         }
