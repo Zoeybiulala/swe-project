@@ -11,9 +11,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to database and model relevant classes
 const mongoose = require('mongoose');
+const { userSchema } = require('./User.js');
+const { attemptSchema } = require('./User.js');
+const { off } = require('./Recipe.js');
 const conn = mongoose.createConnection('mongodb+srv://thdang:PfNuJS36uRbLXFB@cluster0.xiudz.mongodb.net/exploreJournalDb?retryWrites=true');
 var Recipe = conn.model('Recipe', require('./Recipe.js'));
-var User = conn.model('User', require('./User.js'));
+var User = conn.model('User', userSchema)
+var Attempt = conn.model('Attempt', attemptSchema);
 
 var count = 0;
 /*************************************************/
@@ -82,8 +86,7 @@ app.use('/recipe', (req, res) => {
                 res.write('<p>Description: ' + recipe.description + '</p>');
                 //TODO: adding tags and deleting recipe (other usr stories)
 
-                res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
-
+                // res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
                 // adding tags form
                 res.write('<p>Tags: ' + recipe.tags);
                 res.write("<form action=\"/add_tags\" method=\"post\">");
@@ -92,12 +95,12 @@ app.use('/recipe', (req, res) => {
                 res.write("<input type=\"submit\" value=\"Submit!\">");
 
 
-                res.write("<a href=\"/delete?recipe_id=" + recipe.recipe_id + "\">[Delete this recipe]<br></a>");
+                res.write("<br><a href=\"/delete?id=" + recipe._id + "\">[Delete this recipe]<br></a>");
                 res.write("<a href=\"/all\">[Go back]</a>");
                 res.end();
             }
         }
-    })
+    });
 });
 
 //endpoint to create a new recipe and add it to db 
@@ -162,10 +165,47 @@ app.use('/add_tags', (req, res) => {
 });
 
 
-//possibily implementing a error endpoint ?
-// app.use('/err', (req, res) => {
-// 	res.send('uh oh');
-// })
+
+app.use('/delete', (req, res) => {
+    //no id
+    if (!req.query.id) {
+        res.type('html').status(200);
+        res.write('invalid input');
+        res.end();
+    }
+    //find the recipe in the db
+    var queryObject = { "_id": req.query.id };
+    Recipe.findOne(queryObject, (err, recipe) => {
+        if(err) {
+            res.type('html').status(200);
+            console.log('uh oh' + err);
+            res.write(err);
+            res.end();
+        } else {
+            if(!recipe.list_of_users) {
+                console.log("no user have added this recipe");
+            } else {
+                recipe.list_of_users.forEach((uid) => {
+                    User.findOne({"google_uid" : uid}, (err, user) => {
+                        if(err) console.log(err);
+                        else {
+                            user = user.saved_recipes.delete(recipe._id);
+                            User.findOneAndUpdate({"google_uid": uid}, user, (err, user) => {
+                                if(err) console.log(err);
+                            })
+                        }
+                    });
+                });
+
+                Recipe.findOneAndDelete(queryObject, (err, recipe) => {
+                    if(err) console.log(err);
+                });
+                res.redirect('/all');
+            }
+        }
+    });
+    
+});
 
 /*************************************************/
 // Endpoints that return JSON 
@@ -226,7 +266,41 @@ app.use('/checklogin', (req, res) => {
             }
         }
     })
-})
+});
+
+app.use('/userattempts', (req, res) => {
+
+    //no user id 
+    if (!req.query.uid) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    // no recipe id 
+    if (!req.query.rid) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    //find the user in db
+    var queryObject = { "google_uid": req.query.uid };
+    User.findOne(queryObject, (err, user) => {
+        if (err) {
+            res.json({ "status": "error" });
+        } else {
+            if (!user) {
+                res.json({ "status": "error" });
+            } else {
+                this_recipe_attempts = user.saved_recipes.get(req.query.rid);
+                if (this_recipe_attempts) {
+                    res.json({ "status": "success", "data": this_recipe_attempts })
+                } else {
+                    res.json({ "status": "error" });
+                }
+            }
+        }
+    })
+});
 
 app.use('/myrecipes', (req, res) => {
 
@@ -266,6 +340,131 @@ app.use('/myrecipes', (req, res) => {
     })
 })
 
+app.use('/newattempt', (req, res) => {
+
+    // missing parameters 
+    if (!req.query.uid || !req.query.rid || !req.query.note || !req.query.rating) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    if (isNaN(req.query.rating)) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    console.log(req.query.uid + " " + req.query.rid + " " + req.query.note + " " + req.query.rating);
+
+    //find the user in db
+    var queryObject = { "google_uid": req.query.uid };
+    User.findOne(queryObject, (err, user) => {
+        if (err) {
+            res.json({ "status": "error" });
+        } else {
+            if (!user) {
+                res.json({ "status": "error" });
+            } else {
+                this_recipe_attempts = user.saved_recipes.get(req.query.rid);
+                if (this_recipe_attempts) {
+                    // Add new attempt 
+                    var newAttempt = new Attempt({
+                        date: new Date(),
+                        rating: req.query.rating,
+                        note: req.query.note
+                    });
+                    this_recipe_attempts.push(newAttempt);
+                    User.replaceOne({ _id: user._id }, user, (err, docs) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+                    res.json({ "status": "success" });
+                } else {
+                    res.json({ "status": "error" });
+                }
+            }
+        }
+    });
+});
+
+app.use('/user_add_recipe', (req, res) => {
+    /**
+     * Return {"status" : "already added"} if the recipe has already been added to the user
+     * or vice versa, 
+     * and {"status": "success"} if the recipe has been added to the user, and the user
+     * has been added to the recipe.
+     */
+    // missing parameters 
+    if (!req.query.uid || !req.query.rid) {
+        res.json({ "status": "error" });
+        return;
+    }
+
+    console.log("user " + req.query.uid + " recipe " + req.query.rid);
+
+    //find the user in db
+    var queryUser = { "google_uid": req.query.uid };
+
+
+    // update user
+    User.findOne(queryUser, (err, user) => {
+        if (err) {
+            res.json({ "status": "error" });
+        } else {
+            if (!user) {
+                res.json({ "status": "error" });
+                return;
+            } else {
+                let recipe = user.saved_recipes.get(req.query.rid);
+                if (recipe) {
+
+                    console.log("recipe\"" + req.query.rid + "\"" + "already added to user \"" + req.query.uid + "\"");
+                } else {
+                    user.saved_recipes.set(req.query.rid, [{}]);
+                    User.replaceOne({ _id: user._id }, user, (err, docs) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+                };
+            }
+        }
+    });
+
+    // update recipe
+    var queryRecipe = { "_id": req.query.rid };
+
+    Recipe.findOne(queryRecipe, (err, recipe) => {
+        if (err) {
+            res.type('html').status(200);
+            console.log('uh oh' + err);
+            res.write(err);
+        } else {
+            if (recipe.length == 0) {
+                res.type('html').status(200);
+                res.write('no recipe for this id');
+                res.end();
+                return;
+            } else {
+
+                if (recipe.list_of_users.includes(req.query.uid)) {
+                    console.log("user \"" + req.query.uid + "\" already added to recipe \"" + req.query.rid + "\"");
+                    res.json({ "status": "already added" });
+                } else {
+                    Recipe.updateOne(queryRecipe, { $push: { list_of_users: req.query.uid } }, (err, docs) => {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+
+                    res.json({ "status": "success" });
+                }
+
+            }
+        }
+    });
+});
+
 /*************************************************/
 // Endpoints used for testing 
 /*************************************************/
@@ -280,28 +479,19 @@ app.use('/clearDatabase', (req, res) => {
 
 // Create some example recipes and add them to the database
 app.use('/addExamples', (req, res) => {
-    count++;
 
-    var exampleRecipe = new Recipe({
-        recipe_id: count,
-        url: "google.com",
-        description: "delicious",
-        name: "chicken ala google",
-        tags: [],
-        list_of_users: []
-    });
-    count++;
-    var exampleRecipe2 = new Recipe({
-        recipe_id: count,
-        url: "google.net",
-        description: "bad",
-        name: "chicken ala fake google",
-        tags: [],
-        list_of_users: []
-    });
+    exampleRecipes = [
+        new Recipe({ url: "https://www.averiecooks.com/garlic-butter-chicken/", description: "delicious", name: "chicken ala google", tags: [], list_of_users: ["example", "624b3e7e809c5f7a795fbbda"] }),
+        new Recipe({ url: "https://natashaskitchen.com/pan-seared-steak/", description: "\r\n    Pat dry – use paper towels to pat the steaks dry to get a perfect sear and reduce oil splatter.\r\n    Season generously – just before cooking steaks, sprinkle both sides liberally with salt and pepper.\r\n    Preheat the pan on medium and brush with oil. Using just 1/2 Tbsp oil reduces splatter.\r\n    Sear steaks – add steaks and sear each side 3-4 minutes until a brown crust has formed then use tongs to turn steaks on their sides and sear edges (1 min per edge).\r\n    Add butter and aromatics – melt in butter with quartered garlic cloves and rosemary sprigs. Tilt pan to spoon garlic butter over steaks and cook to your desired doneness (see chart below).\r\n    Remove steak and rest 10 minutes before slicing against the grain.\r\n", name: "Pan Sear Steaks", tags: ["steak", "dinner"], list_of_users: [] }),
+        new Recipe({ url: "https://cookieandkate.com/roasted-butternut-squash-soup/", description: "Let’s cozy up with a bowl of warm, creamy butternut squash soup. Butternut squash and cool weather go together like they were made for each other—which, really, they were.", name: "Love Real Food Roasted Butternut Squash Soup", tags: ["soup", "vegetable"], list_of_users: [] }),
+        new Recipe({ url: "https://www.fifteenspatulas.com/homemade-sushi/", description: "Homemade Sushi is so much cheaper than at the restaurant. Sushi is easy and fun to make at home, and you can put all your favorite ingredients into your perfect custom roll — here’s how!", name: "Homemade Sushi", tags: [], list_of_users: [] }),
+        new Recipe({ url: "https://www.gimmesomeoven.com/fried-rice-recipe/", description: "This Chinese-inspired fried rice recipe is my absolute fave. It’s quick and easy to make, customizable with any of your favorite mix-ins, and so irresistibly delicious.", name: "Fried Rice", tags: ["asian", "quick", "dinner"], list_of_users: [] })
+    ]
 
-    exampleRecipe.save((err) => { if (err) { console.log(err) } });
-    exampleRecipe2.save((err) => { if (err) { console.log(err) } });
+    exampleRecipes.forEach(recipe => recipe.save((err) => { if (err) { console.log(err) } }));
+    exampleRecipe = exampleRecipes[0];
+
+    // exampleRecipe.save((err) => { if (err) { console.log(err) } });
 
     var exampleUser = new User({
         google_uid: "example",

@@ -1,9 +1,11 @@
 package com.example.explorejournal;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
@@ -21,7 +23,7 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
 
     private final LayoutInflater inflater;
     private final List<Recipe> data;
-    private List<Recipe> myList;
+    private final List<Recipe> myList;
     private ItemClickListener clickListener;
 
     public GlobalRecipeAdapter(Context context, List<Recipe> data){
@@ -46,7 +48,15 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
 
     @Override
     public int getItemCount() {
+<<<<<<< HEAD
         return myList.size();
+=======
+        if (data == null) {
+            return 0;
+        } else {
+            return data.size();
+        }
+>>>>>>> main
     }
 
     public Recipe getItem(int position) {
@@ -56,11 +66,15 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView recipeNameView;
+        Button saveRecipeButton;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             recipeNameView = itemView.findViewById(R.id.RecipeName);
             itemView.setOnClickListener(this);
+            itemView.findViewById(R.id.RecipeName);
+            saveRecipeButton = itemView.findViewById(R.id.SaveRecipe);
+            saveRecipeButton.setOnClickListener(this);
         }
 
         @Override
@@ -84,7 +98,7 @@ public class GlobalRecipeAdapter extends RecyclerView.Adapter<GlobalRecipeAdapte
         return myFilter;
     }
 
-    private Filter myFilter = new Filter() {
+    private final Filter myFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             List<Recipe> filteredList = new ArrayList<>();

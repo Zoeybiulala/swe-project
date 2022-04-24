@@ -6,9 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +35,7 @@ public class MyRecipeViewActivity extends BaseActivity implements MyRecipeAdapte
         loggedInName = getIntent().getStringExtra("name");
         loggedInGoogleUID = getIntent().getStringExtra("google_uid");
         TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
-        welcomeMessage.setText("Hello, " + loggedInName + "!\n(" + loggedInGoogleUID + ")");
+        welcomeMessage.setText("Hello, " + loggedInName + "!");
 
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -116,9 +115,17 @@ public class MyRecipeViewActivity extends BaseActivity implements MyRecipeAdapte
             loggedInIntent.putExtra("google_uid", loggedInGoogleUID);
             loggedInIntent.putExtra("name", loggedInName);
             startActivity(loggedInIntent);
-        } else if(view.getId() == R.id.nav_button_global_recipes) {
-            // Nothing
         }
     }
 
+    public void refreshMyRecipeView(View view) {
+        if (view.getId() == R.id.refreshMyRecipeButton) {
+            getMyRecipes();
+            getMyRecipes();
+            adapter = new MyRecipeAdapter(this, myRecipesList);
+            adapter.setClickListener(this);
+            RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
+            recyclerView.setAdapter(adapter);
+        }
+    }
 }

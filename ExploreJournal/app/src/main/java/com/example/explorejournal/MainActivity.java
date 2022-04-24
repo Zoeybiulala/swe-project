@@ -96,10 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
                         Intent loggedInIntent = new Intent(this, MyRecipeViewActivity.class);
 
-                        loggedInIntent.putExtra("google_uid", "example");
-                        loggedInIntent.putExtra("name", "example user");
-//                        loggedInIntent.putExtra("google_uid", loggedInUser);
-//                        loggedInIntent.putExtra("name", user.getProfile().getName());
+                        loggedInIntent.putExtra("google_uid", loggedInUser);
+                        loggedInIntent.putExtra("name", user.getProfile().getName());
                         startActivity(loggedInIntent);
                         Log.v("AUTH",
                                 "Successfully logged in to MongoDB Realm using Google OAuth.");
@@ -112,11 +110,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("AUTH", "Google Auth failed: "
                         + (completedTask.getException() == null? "null exception" : completedTask.getException().toString()));
 
-                // TODO toast
             }
         } catch (ApiException e) {
             Log.w("AUTH", "Failed to log in with Google OAuth: " + e.getMessage());
-            // TODO toast
         }
     }
 

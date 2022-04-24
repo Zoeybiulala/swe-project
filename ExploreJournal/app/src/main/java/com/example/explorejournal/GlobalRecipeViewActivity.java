@@ -1,28 +1,30 @@
 package com.example.explorejournal;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
-import java.util.ArrayList;
-import java.util.List;
-
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.SearchView;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class GlobalRecipeViewActivity extends BaseActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
@@ -31,25 +33,34 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
     GlobalRecipeAdapter adapter;
     String loggedInGoogleUID;
     String loggedInName;
+    Context here;
+    GlobalRecipeViewActivity here1;
+    RecyclerView recyclerView;
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_global_recipe_view);
+
+        here = this;
+        here1 = this;
 
         loggedInName = getIntent().getStringExtra("name");
         loggedInGoogleUID = getIntent().getStringExtra("google_uid");
         TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
-        welcomeMessage.setText("Hello, " + loggedInName + "!\n(" + loggedInGoogleUID + ")");
+        welcomeMessage.setText("Hello, " + loggedInName + "!");
 
-        RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
+        recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getAllRecipes();
         adapter = new GlobalRecipeAdapter(this, allRecipesList);
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
+
+
 
         if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
             DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
@@ -63,7 +74,31 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
+        if (view.getId() != R.id.SaveRecipe) {
+            Recipe r = adapter.getItem(position);
+            Toast.makeText(this, r.getName() + "\nTags: " + r.getTags(), Toast.LENGTH_SHORT).show();
+
+        } else {
+            // recipe
+            Recipe recipe = adapter.getItem(position);
+
+            JSONObject result = new ServerConnection("http://10.0.2.2:3000").get("user_add_recipe?uid=" + loggedInGoogleUID + "&rid=" + recipe.id);
+
+            try {
+
+                if (result != null && result.getString("status").equals("success")) {
+                    Toast.makeText(this, "Recipe \"" + recipe.getName() + "\" has been added to your library", Toast.LENGTH_SHORT).show();
+                } else if (result != null && result.getString("status").equals("already added")) {
+                    Toast.makeText(this, "Recipe \"" + recipe.getName() + "\" is already in your library!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                throw new IllegalStateException();
+            }
+        }
     }
 
     // Fetch JSON array of recipes from server, convert it into a list of Recipe objects,
@@ -124,7 +159,7 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main,menu);
+        inflater.inflate(R.menu.menu_with_search,menu);
 
         MenuItem searchItem = menu.findItem(R.id.search);
         SearchView searchView = (SearchView) searchItem.getActionView();
@@ -139,7 +174,15 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.getFilter().filter(newText);
+                List<Recipe> filtered = new ArrayList<>();
+                for(Recipe recipe : allRecipesList){
+                    if(recipe.name.toLowerCase().contains(newText.toLowerCase())){
+                        filtered.add(recipe);
+                    }
+                }
+                adapter = new GlobalRecipeAdapter(here, filtered);
+                adapter.setClickListener(here1);
+                recyclerView.setAdapter(adapter);
                 return false;
             }
         });
