@@ -20,6 +20,12 @@ var User = conn.model('User', userSchema)
 var Attempt = conn.model('Attempt', attemptSchema);
 
 var count = 0;
+
+/**************** Looks Pretty *************** */
+const stylesheet = "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">"
+const bootstraps1 = "<script src=\"https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js\" integrity=\"sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1\" crossorigin=\"anonymous\"></script>";
+const bootstraps2 = " <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js\" integrity=\"sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM\" crossorigin=\"anonymous\"></script>";
+
 /*************************************************/
 // Endpoints that return HTML 
 /*************************************************/
@@ -38,6 +44,11 @@ app.use('/all', (req, res) => {
 
             // Create title 
             res.type('html');
+
+            res.type('html').status(200);
+            res.write("<head>" + stylesheet + "</head>");
+            res.write("<body><div class=\"container\">"); // container, body
+
             res.write("<h1>Recipes</h1>");
 
             // show all the recipes
@@ -48,7 +59,15 @@ app.use('/all', (req, res) => {
                 res.write("</a>");
                 res.write("</p>");
             });
-            res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
+
+            res.write("<br><a class=\"btn btn-dark\" href=\"/public/recipeform.html\">Add a recipe</a>");
+
+            res.write("</div>"); // close container
+            res.write(bootstraps1);
+            res.write(bootstraps2);
+
+            res.write("</body>"); // close body
+
             res.end();
         }
     }).sort({ 'name': 'asc' }); // this sorts them BEFORE rendering the results
@@ -79,6 +98,9 @@ app.use('/recipe', (req, res) => {
                 return;
             } else {
                 res.type('html').status(200);
+                res.write("<head>" + stylesheet + "</head>");
+                res.write("<body><div class=\"container\">"); // container, body
+
                 res.write('<h1>' + recipe.name + '</h1>');
                 res.write('<p>ID:' + recipe._id + '</p>');
                 res.write('<p>URL: <a href=<a href=\"' + recipe.url + '\">' +
@@ -88,15 +110,23 @@ app.use('/recipe', (req, res) => {
 
                 // res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
                 // adding tags form
-                res.write('<p>Tags: ' + recipe.tags);
+                res.write('<p>Tags: ' + recipe.tags.join(", "));
                 res.write("<form action=\"/add_tags\" method=\"post\">");
                 res.write("<input name=\"recipe_id\" type=\"hidden\" value=\"" + recipe._id + "\">");
                 res.write("Tags <input name=\"tag\">");
-                res.write("<input type=\"submit\" value=\"Submit!\">");
+                res.write("<br>       </br>");
+                res.write("<input class=\"btn btn-primary\" type=\"submit\" value=\"Submit tags!\">");
+                res.write("</form>");
+                res.write("<br><a class=\"btn btn-danger\" href=\"/delete?id=" + recipe._id + "\">Delete this recipe<br></a>");
+                res.write("<p></p>");
+                res.write("<a class=\"btn btn-dark\" href=\"/all\">Go back</a>");
 
+                res.write("</div>"); // close container
+                res.write(bootstraps1);
+                res.write(bootstraps2);
 
-                res.write("<br><a href=\"/delete?id=" + recipe._id + "\">[Delete this recipe]<br></a>");
-                res.write("<a href=\"/all\">[Go back]</a>");
+                res.write("</body>"); // close body
+
                 res.end();
             }
         }
@@ -121,8 +151,18 @@ app.use('/create_recipe', (req, res) => {
             res.end();
         } else {
             res.type('html').status(200);
+            res.write("<head>" + stylesheet + "</head>");
+            res.write("<body><div class=\"container\">"); // container, body
+
             res.write('<p>successfully added ' + newRecipe.name + ' to the database</p>');
-            res.write("<a href=\"/all\">[Go back]</a>");
+            res.write("<a class=\"btn btn-primary\" href=\"/all\">Go back</a>");
+
+            res.write("</div>"); // close container
+            res.write(bootstraps1);
+            res.write(bootstraps2);
+
+            res.write("</body>"); // close body
+
             res.end();
             console.log(count);
         }
@@ -155,9 +195,21 @@ app.use('/add_tags', (req, res) => {
             if (!tagsString) {
                 res.json({ 'status': 'no tag input!' });
             } else {
+
+                res.type('html').status(200);
+                res.write("<head>" + stylesheet + "</head>");
+                res.write("<body><div class=\"container\">"); // container, body
+
                 res.write("<h1>Recipe</h1>");
                 res.write("<a href=\"/recipe?id=" + recipe_id + "\">");
                 res.write("Finish adding tags! Go back to recipe!");
+
+                res.write("</div>"); // close container
+                res.write(bootstraps1);
+                res.write(bootstraps2);
+
+                res.write("</body>"); // close body
+
                 res.end();
             }
         }
@@ -176,35 +228,35 @@ app.use('/delete', (req, res) => {
     //find the recipe in the db
     var queryObject = { "_id": req.query.id };
     Recipe.findOne(queryObject, (err, recipe) => {
-        if(err) {
+        if (err) {
             res.type('html').status(200);
             console.log('uh oh' + err);
             res.write(err);
             res.end();
         } else {
-            if(!recipe.list_of_users) {
+            if (!recipe.list_of_users) {
                 console.log("no user have added this recipe");
             } else {
                 recipe.list_of_users.forEach((uid) => {
-                    User.findOne({"google_uid" : uid}, (err, user) => {
-                        if(err) console.log(err);
+                    User.findOne({ "google_uid": uid }, (err, user) => {
+                        if (err) console.log(err);
                         else {
                             user = user.saved_recipes.delete(recipe._id);
-                            User.findOneAndUpdate({"google_uid": uid}, user, (err, user) => {
-                                if(err) console.log(err);
+                            User.findOneAndUpdate({ "google_uid": uid }, user, (err, user) => {
+                                if (err) console.log(err);
                             })
                         }
                     });
                 });
 
                 Recipe.findOneAndDelete(queryObject, (err, recipe) => {
-                    if(err) console.log(err);
+                    if (err) console.log(err);
                 });
                 res.redirect('/all');
             }
         }
     });
-    
+
 });
 
 /*************************************************/
