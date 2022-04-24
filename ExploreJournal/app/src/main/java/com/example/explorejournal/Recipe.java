@@ -25,6 +25,14 @@ public class Recipe {
         return name;
     }
 
+    public String getTags() {
+        if (tags.size() == 0) {
+            return "none";
+        } else {
+            return tags.toString();
+        }
+    }
+
     @NonNull
     @Override
     public String toString(){

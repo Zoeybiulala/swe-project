@@ -35,7 +35,7 @@ public class MyRecipeViewActivity extends BaseActivity implements MyRecipeAdapte
         loggedInName = getIntent().getStringExtra("name");
         loggedInGoogleUID = getIntent().getStringExtra("google_uid");
         TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
-        welcomeMessage.setText("Hello, " + loggedInName + "!\n(" + loggedInGoogleUID + ")");
+        welcomeMessage.setText("Hello, " + loggedInName + "!");
 
         RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
