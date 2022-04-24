@@ -107,8 +107,7 @@ app.use('/recipe', (req, res) => {
                 res.write('<p>Description: ' + recipe.description + '</p>');
                 //TODO: adding tags and deleting recipe (other usr stories)
 
-                res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
-
+                // res.write("<br><a href=\"/public/recipeform.html\">[Add a recipe]</a>");
                 // adding tags form
                 res.write('<p>Tags: ' + recipe.tags);
                 res.write("<form action=\"/add_tags\" method=\"post\">");
@@ -117,7 +116,7 @@ app.use('/recipe', (req, res) => {
                 res.write("<input type=\"submit\" value=\"Submit!\">");
 
 
-                res.write("<a href=\"/delete?recipe_id=" + recipe.recipe_id + "\">[Delete this recipe]<br></a>");
+                res.write("<br><a href=\"/delete?id=" + recipe._id + "\">[Delete this recipe]<br></a>");
                 res.write("<a href=\"/all\">[Go back]</a>");
 
                 res.write("</div>"); // close container
@@ -216,10 +215,47 @@ app.use('/add_tags', (req, res) => {
 });
 
 
-//possibily implementing a error endpoint ?
-// app.use('/err', (req, res) => {
-// 	res.send('uh oh');
-// })
+
+app.use('/delete', (req, res) => {
+    //no id
+    if (!req.query.id) {
+        res.type('html').status(200);
+        res.write('invalid input');
+        res.end();
+    }
+    //find the recipe in the db
+    var queryObject = { "_id": req.query.id };
+    Recipe.findOne(queryObject, (err, recipe) => {
+        if(err) {
+            res.type('html').status(200);
+            console.log('uh oh' + err);
+            res.write(err);
+            res.end();
+        } else {
+            if(!recipe.list_of_users) {
+                console.log("no user have added this recipe");
+            } else {
+                recipe.list_of_users.forEach((uid) => {
+                    User.findOne({"google_uid" : uid}, (err, user) => {
+                        if(err) console.log(err);
+                        else {
+                            user = user.saved_recipes.delete(recipe._id);
+                            User.findOneAndUpdate({"google_uid": uid}, user, (err, user) => {
+                                if(err) console.log(err);
+                            })
+                        }
+                    });
+                });
+
+                Recipe.findOneAndDelete(queryObject, (err, recipe) => {
+                    if(err) console.log(err);
+                });
+                res.redirect('/all');
+            }
+        }
+    });
+    
+});
 
 /*************************************************/
 // Endpoints that return JSON 
@@ -495,7 +531,7 @@ app.use('/clearDatabase', (req, res) => {
 app.use('/addExamples', (req, res) => {
 
     exampleRecipes = [
-        new Recipe({ url: "https://www.averiecooks.com/garlic-butter-chicken/", description: "delicious", name: "chicken ala google", tags: [], list_of_users: ["example", "example", "624b3e7e809c5f7a795fbbda"] }),
+        new Recipe({ url: "https://www.averiecooks.com/garlic-butter-chicken/", description: "delicious", name: "chicken ala google", tags: [], list_of_users: ["example", "624b3e7e809c5f7a795fbbda"] }),
         new Recipe({ url: "https://natashaskitchen.com/pan-seared-steak/", description: "\r\n    Pat dry – use paper towels to pat the steaks dry to get a perfect sear and reduce oil splatter.\r\n    Season generously – just before cooking steaks, sprinkle both sides liberally with salt and pepper.\r\n    Preheat the pan on medium and brush with oil. Using just 1/2 Tbsp oil reduces splatter.\r\n    Sear steaks – add steaks and sear each side 3-4 minutes until a brown crust has formed then use tongs to turn steaks on their sides and sear edges (1 min per edge).\r\n    Add butter and aromatics – melt in butter with quartered garlic cloves and rosemary sprigs. Tilt pan to spoon garlic butter over steaks and cook to your desired doneness (see chart below).\r\n    Remove steak and rest 10 minutes before slicing against the grain.\r\n", name: "Pan Sear Steaks", tags: ["steak", "dinner"], list_of_users: [] }),
         new Recipe({ url: "https://cookieandkate.com/roasted-butternut-squash-soup/", description: "Let’s cozy up with a bowl of warm, creamy butternut squash soup. Butternut squash and cool weather go together like they were made for each other—which, really, they were.", name: "Love Real Food Roasted Butternut Squash Soup", tags: ["soup", "vegetable"], list_of_users: [] }),
         new Recipe({ url: "https://www.fifteenspatulas.com/homemade-sushi/", description: "Homemade Sushi is so much cheaper than at the restaurant. Sushi is easy and fun to make at home, and you can put all your favorite ingredients into your perfect custom roll — here’s how!", name: "Homemade Sushi", tags: [], list_of_users: [] }),
