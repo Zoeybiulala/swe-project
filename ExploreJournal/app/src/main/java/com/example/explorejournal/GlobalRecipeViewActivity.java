@@ -1,6 +1,7 @@
 package com.example.explorejournal;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class GlobalRecipeViewActivity extends BaseActivity implements GlobalRecipeAdapter.ItemClickListener{
     // Referenced from here: https://stackoverflow.com/questions/40584424/simple-android-recyclerview-example
@@ -31,19 +33,26 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
     GlobalRecipeAdapter adapter;
     String loggedInGoogleUID;
     String loggedInName;
+    Context here;
+    GlobalRecipeViewActivity here1;
+    RecyclerView recyclerView;
 
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_global_recipe_view);
+
+        here = this;
+        here1 = this;
 
         loggedInName = getIntent().getStringExtra("name");
         loggedInGoogleUID = getIntent().getStringExtra("google_uid");
         TextView welcomeMessage = findViewById(R.id.WelcomeMessage);
         welcomeMessage.setText("Hello, " + loggedInName + "!\n(" + loggedInGoogleUID + ")");
 
-        RecyclerView recyclerView = findViewById(R.id.ExampleRecyclerView);
+        recyclerView = findViewById(R.id.ExampleRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         getAllRecipes();
@@ -164,7 +173,15 @@ public class GlobalRecipeViewActivity extends BaseActivity implements GlobalReci
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.getFilter().filter(newText);
+                List<Recipe> filtered = new ArrayList<>();
+                for(Recipe recipe : allRecipesList){
+                    if(recipe.name.toLowerCase().contains(newText.toLowerCase())){
+                        filtered.add(recipe);
+                    }
+                }
+                adapter = new GlobalRecipeAdapter(here, filtered);
+                adapter.setClickListener(here1);
+                recyclerView.setAdapter(adapter);
                 return false;
             }
         });
